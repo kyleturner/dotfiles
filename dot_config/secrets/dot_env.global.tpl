@@ -1,4 +1,4 @@
-# dot_config/secrets/.env.global.tpl
+# dot_config/secrets/dot_env.global.tpl
 # op:// REFERENCES ONLY — no actual secrets. Safe to commit to a public repo.
 # Resolved into ~/.config/secrets/.env.global via `op inject`, run by
 # .chezmoiscripts/run_onchange_after_50-resolve-secrets.sh.tmpl. The resolved output

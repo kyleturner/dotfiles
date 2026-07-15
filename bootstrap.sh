@@ -66,9 +66,9 @@ read -p "Press Enter once all four are done, or Ctrl-C to stop and do them now..
 
 # ------------------------------------------------------------
 # Pre-seed ~/.ssh/config so `chezmoi init` can clone over SSH via the 1Password agent.
-# chezmoi's own dot_config/ssh (or equivalent) will confirm/overwrite this identically
-# once applied — this is only needed to break the chicken-and-egg: chezmoi needs SSH
-# working to clone the repo that would otherwise configure SSH.
+# chezmoi's own dot_ssh/config will confirm/overwrite this identically once applied —
+# this is only needed to break the chicken-and-egg: chezmoi needs SSH working to clone
+# the repo that would otherwise configure SSH.
 # ------------------------------------------------------------
 mkdir -p ~/.ssh
 if ! grep -q "1password" ~/.ssh/config 2>/dev/null; then
@@ -81,7 +81,7 @@ EOF
 fi
 
 # ------------------------------------------------------------
-# sudo keepalive — prevents timeout mid-run (needed for mas, defaults, etc.)
+# sudo keepalive — prevents timeout mid-run (needed for mas, defaults, 1password-cli, etc.)
 # ------------------------------------------------------------
 echo ""
 echo "→ Caching sudo credentials..."
@@ -112,13 +112,13 @@ else
   echo "✓ Homebrew already installed"
 fi
 
-echo "→ Installing bootstrap dependencies (git, chezmoi, mas, 1password-cli)..."
-brew install git chezmoi mas 1password-cli
+echo "→ Installing bootstrap dependencies (git, chezmoi, mas)..."
+brew install git chezmoi mas
 
 # ------------------------------------------------------------
 # PHASE 2: chezmoi init — this is where the real work happens.
 # Everything from here is orchestrated by .chezmoiscripts/ in the dotfiles repo.
-# See ARCHIVE.md Section 9 for the full execution order (10 → 50).
+# See ARCHIVE.md Section 9 for the full execution order (10 → 60).
 # ------------------------------------------------------------
 echo ""
 echo "→ [Phase 2] Running chezmoi init --apply ${DOTFILES_REPO}..."

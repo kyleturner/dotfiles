@@ -1,12 +1,10 @@
 # .gitignore — kyleturner/dotfiles
 # This file is the actual enforcement mechanism for "no secrets in a public repo."
 # Everything under it is either a resolved secret, a machine-specific artifact, or
-# cache/state that shouldn't be version-controlled. See macos-dev-workstation-ARCHIVE.md
-# Section 4.8 for the full reasoning — *.tpl files are safe and committed; their
-# resolved output (listed below) is never committed.
+# cache/state that shouldn't be version-controlled. The *.tpl versions of these ARE
+# committed and safe (op:// references only).
 
 # --- Resolved secrets (op inject output — never the source, always the output) ---
-# The .tpl versions of these ARE committed and safe (op:// references only).
 dot_config/secrets/.env.global
 .env.local
 .env.local.*

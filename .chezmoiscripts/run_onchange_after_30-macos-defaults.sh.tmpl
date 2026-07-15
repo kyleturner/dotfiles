@@ -118,7 +118,7 @@ defaults write com.apple.TimeMachine "DoNotOfferNewDisksForBackup" -bool true
 echo "✓ Xcode/TextEdit/Time Machine defaults configured"
 
 ###############################################
-# SPOTLIGHT EXCLUSIONS — ~/Projects, not ~/Developer or ~/code
+# SPOTLIGHT EXCLUSIONS — ~/Projects
 ###############################################
 mkdir -p "{{ .projectsDir }}"
 touch "{{ .projectsDir }}/.metadata_never_index"

@@ -15,7 +15,7 @@ kubectl   = "latest"
 pitchfork = "latest"      # background process supervision — see Section 4.14
 
 [env]
-# Resolved secrets — gitignored, generated via op inject. See dot_config/secrets/.env.global.tpl
+# Resolved secrets — gitignored, generated via op inject. See dot_config/secrets/dot_env.global.tpl
 # and .chezmoiscripts/run_onchange_after_50-resolve-secrets.sh.tmpl for how this file is built.
 _.file = "~/.config/secrets/.env.global"
 
@@ -23,7 +23,7 @@ EDITOR = "cursor"
 MISE_NODE_DEFAULT_PACKAGES_FILE = "~/.default-node-packages"
 
 # Homebrew casks don't auto-update by default — this opts Claude Code itself into
-# background updates despite being installed via cask. See Section 4.16.
+# background updates despite the cask install. See Section 4.16.
 CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE = "1"
 
 # Restricts codebase-memory-mcp's index_repository to this directory tree — a real

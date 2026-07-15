@@ -85,11 +85,10 @@ brew "k9s"                     # Kubernetes TUI
 # NOTE: codebase-memory-mcp is NOT installable via Homebrew. There is an open,
 # unfulfilled feature request on the project's own repo (DeusData/codebase-memory-mcp
 # issue #491, "brew installation for macos?", filed June 2026) — brew "codebase-memory-mcp"
-# was a real first-run bug; no such formula has ever existed. Install via the project's
-# own script instead, run manually (or add as a chezmoi script if this needs to be
-# automated later):
-#   curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
-# See ARCHIVE.md Section 4.17 for full usage guidance.
+# was a real first-run bug; no such formula has ever existed. Installed instead via
+# .chezmoiscripts/run_onchange_after_60-install-codebase-memory-mcp.sh.tmpl, which runs
+# the project's own install script as part of the normal bootstrap flow. See ARCHIVE.md
+# Section 4.17 for full usage guidance.
 brew "ollama"                  # Local LLM inference. `brew services start ollama` to run as
                                 # background service; OpenAI-compatible API on :11434.
 

@@ -8,6 +8,21 @@
 {{- $email := promptStringOnce . "email" "Git email" -}}
 {{- $profile := promptStringOnce . "profile" "Profile (personal/work)" "personal" -}}
 
+{{/*
+NOTE: the blank line + this comment block exist deliberately to guarantee a real
+newline lands before [data] below. The three promptStringOnce lines above use
+{{- ... -}} trim markers on both sides to avoid leaving stray blank lines in the
+rendered chezmoi.toml -- but that trimming is aggressive: it strips ALL whitespace
+back to the previous non-whitespace character, which previously ate the newline
+between the last comment line and [data], gluing them onto one line. Since a `#`
+comment in TOML runs to end-of-line, [data] silently became part of the comment
+and was never actually parsed as a table header -- name/email/profile then landed
+outside [data] entirely, causing "map has no entry for key name" in every template
+that referenced .name / .email. This comment block, which itself doesn't use
+trim markers, forces a hard newline boundary before [data] regardless of how the
+prompt lines above are trimmed.
+*/}}
+
 [data]
     name         = {{ $name | quote }}
     email        = {{ $email | quote }}
