@@ -33,3 +33,10 @@ if ! brew bundle check --file="{{ .chezmoi.homeDir }}/.config/homebrew/Brewfile"
 else
   echo "✓ [10] All Homebrew packages confirmed installed."
 fi
+
+# brew bundle can leave /opt/homebrew/share group-writable (drwxrwxr-x), which
+# causes zsh compinit to prompt on every new shell. Strip the group-write bit.
+if [ -d /opt/homebrew/share ]; then
+  chmod g-w /opt/homebrew/share
+  echo "✓ [10] Fixed /opt/homebrew/share permissions (removed group-write for compinit)."
+fi
