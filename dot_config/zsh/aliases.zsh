@@ -1,5 +1,5 @@
 # ~/.config/zsh/aliases.zsh
-# RULE (macos-dev-workstation-ARCHIVE.md Section 4.3): only project-independent,
+# RULE (runbook-guide.md Section 4.3): only project-independent,
 # generic-tool aliases go here. Anything whose behavior depends on a specific project's
 # toolchain belongs in that project's .mise.toml [tasks], invoked via `mise run`.
 

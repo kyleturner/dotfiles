@@ -2,7 +2,7 @@
 # Same rule as aliases.zsh: project-independent only.
 
 # Full stack health check — brew, mise, chezmoi in one shot.
-# See macos-dev-workstation-RUNBOOK.md Section 6.
+# See runbook.md Section 6.
 stackcheck() {
   echo "→ brew bundle check..."
   brew bundle check --file="$HOME/.config/homebrew/Brewfile" || echo "  (see 'brew bundle check --verbose' for details)"

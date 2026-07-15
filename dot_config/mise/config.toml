@@ -1,7 +1,7 @@
 # ~/.config/mise/config.toml
 # Global mise config. Per-project .mise.toml files override/extend this.
 # mise is the single source of truth for all runtime versions and env var loading —
-# see macos-dev-workstation-ARCHIVE.md Section 4.4 and the alias-vs-mise-task rule in 4.3.
+# see runbook-guide.md Section 4.4 and the alias-vs-mise-task rule in 4.3.
 
 [tools]
 node      = "22"          # LTS — keeps existing pnpm projects working

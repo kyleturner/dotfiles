@@ -1,5 +1,5 @@
 # ~/.config/starship.toml
-# See macos-dev-workstation-ARCHIVE.md Section 4.3. Starship's job is to reflect state —
+# See runbook-guide.md Section 4.3. Starship's job is to reflect state —
 # git branch, mise-managed runtime version, tmux session name — in <10ms, no plugin bloat.
 #
 # NOTE: module selection below is a functional starting point, not a specifically

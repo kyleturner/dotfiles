@@ -1,5 +1,5 @@
 # ~/.ssh/config
-# See macos-dev-workstation-ARCHIVE.md Section 4.11.
+# See runbook-guide.md Section 4.11.
 #
 # Routes all SSH operations through 1Password's SSH agent rather than the default
 # ssh-agent or on-disk private keys. Requires: 1Password Settings -> Developer ->

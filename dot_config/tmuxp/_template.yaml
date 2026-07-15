@@ -1,6 +1,6 @@
 # ~/.config/tmuxp/_template.yaml
 # Copy this to a project-specific file (e.g. myapp.yaml) and adjust.
-# See macos-dev-workstation-ARCHIVE.md Section 14.4.
+# See runbook-guide.md Section 14.4.
 #
 # RULE: every pane that runs a project-specific command calls `mise run <task>`,
 # never the underlying tool directly. tmuxp only ever describes shape (panes, names),

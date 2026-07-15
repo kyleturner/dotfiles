@@ -1,5 +1,5 @@
 # Brewfile — kyleturner/dotfiles
-# Generated from macos-dev-workstation-ARCHIVE.md — see that doc for the "why" behind every line.
+# Generated from runbook-guide.md — see that doc for the "why" behind every line.
 # Run: brew bundle --file=Brewfile
 # Verify: brew bundle check --file=Brewfile
 #

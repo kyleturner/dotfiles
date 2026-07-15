@@ -1,5 +1,5 @@
 #!/bin/zsh
-# ~/.zshrc — see macos-dev-workstation-ARCHIVE.md Section 4.3.
+# ~/.zshrc — see runbook-guide.md Section 4.3.
 # Order matters: mise activation MUST come before anything that expects mise-managed
 # tools on $PATH. Starship comes after plugins so it can reflect their state.
 

@@ -2,8 +2,8 @@
 # bootstrap.sh — kyleturner/dotfiles
 # curl -fsSL https://raw.githubusercontent.com/kyleturner/dotfiles/main/bootstrap.sh | bash
 #
-# Full architecture and reasoning: macos-dev-workstation-ARCHIVE.md
-# Step-by-step runbook: macos-dev-workstation-RUNBOOK.md
+# Full architecture and reasoning: runbook-guide.md
+# Step-by-step runbook: runbook.md
 #
 # This script does the minimum needed to get chezmoi installed and running — chezmoi
 # then orchestrates everything else via .chezmoiscripts/. See ARCHIVE.md Section 9 for

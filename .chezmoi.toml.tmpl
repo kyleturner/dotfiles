@@ -1,7 +1,7 @@
 # .chezmoi.toml.tmpl
 # chezmoi reads this at `chezmoi init` time to determine per-machine template data.
 # Prompts are kept to exactly three (name, email, profile) per the standing rule in
-# macos-dev-workstation-ARCHIVE.md Section 4.3 — everything else is either hardcoded
+# runbook-guide.md Section 4.3 — everything else is either hardcoded
 # (this is a single-machine setup, see Section 4 Callout #1) or resolved via op inject.
 
 {{- $name := promptStringOnce . "name" "Full name" "Kyle Turner" -}}

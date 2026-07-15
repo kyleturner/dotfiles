@@ -2,8 +2,8 @@
 
 Kyle Turner's macOS developer workstation — managed with [chezmoi](https://chezmoi.io).
 
-Full architecture, decision log, and citations: see `macos-dev-workstation-ARCHIVE.md` and
-`macos-dev-workstation-RUNBOOK.md` in the private planning docs (not in this repo).
+Full architecture, decision log, and citations: see `runbook-guide.md` and
+`runbook.md` in the private planning docs (not in this repo).
 
 ## Bootstrap a new machine
 

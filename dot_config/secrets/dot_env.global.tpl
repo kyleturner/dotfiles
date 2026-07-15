@@ -9,7 +9,7 @@
 # .chezmoiscripts/run_onchange_after_50-resolve-secrets.sh.tmpl. The resolved output
 # file is gitignored -- see the repo's .gitignore.
 #
-# Vault: "Developer" -- see macos-dev-workstation-ARCHIVE.md Section 4.8.
+# Vault: "Developer" -- see runbook-guide.md Section 4.8.
 #
 # NOTE: for "API Credential" category items, 1Password's actual field name is
 # "credential", not "token" -- confirmed against 1Password's own item-category docs.
