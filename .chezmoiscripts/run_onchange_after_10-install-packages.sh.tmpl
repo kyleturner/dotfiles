@@ -10,6 +10,16 @@ echo "→ [10] Installing Homebrew packages..."
 # relied on it — the env var is the stable equivalent.
 export HOMEBREW_BUNDLE_NO_LOCK=1
 
+# Migrate any pre-existing "linear-linear" cask to its renamed token "linear" before
+# brew bundle runs. This is the documented, correct fix for a real, confirmed Homebrew
+# cask rename (Brewfile now uses "linear" directly) — `brew migrate --cask` is the
+# supported command for exactly this case, not a manual uninstall/reinstall. Safe to
+# run even if linear-linear was never installed (no-ops with a clear message).
+if brew list --cask linear-linear &> /dev/null; then
+  echo "→ Migrating cask linear-linear → linear..."
+  brew migrate --cask linear-linear || echo "⚠️  brew migrate failed — see brew bundle output below for details."
+fi
+
 brew bundle --file="{{ .chezmoi.homeDir }}/.config/homebrew/Brewfile"
 
 # OrbStack self-updates; Homebrew tracks a stale version afterward and plain `brew upgrade`

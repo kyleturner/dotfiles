@@ -137,17 +137,26 @@ cask "google-chrome"            # Cross-browser testing
 cask "firefox"                  # Cross-browser testing
 
 # --- Communication + project management ---
-cask "linear-linear"            # NOTE: brew may print "Cask linear-linear was renamed to
-                                 # linear" — checked directly against Homebrew's own current
-                                 # cask source (July 2026): the real, canonical name is still
-                                 # linear-linear. This is a harmless warning, not an error —
-                                 # the install succeeds regardless. Left as-is.
+cask "linear"                   # Corrected token — was "linear-linear". An earlier version
+                                 # of this document concluded the rename warning was a false
+                                 # alarm based on Homebrew's cask source at the time; that
+                                 # conclusion did not hold up under real, repeated bootstrap
+                                 # runs where the rename warning kept firing. Homebrew has
+                                 # since completed the cask rename (linear-linear → linear).
+                                 # Leaving the old token in place risks the cask silently not
+                                 # receiving updates under `brew outdated` — a real, documented
+                                 # Homebrew behavior for renamed-but-not-updated casks, not
+                                 # just cosmetic noise. Using the current token avoids both
+                                 # the warning and that update-tracking risk.
 cask "slack"
 cask "notion"
 
 # --- System utilities ---
-cask "ice"                      # Menu bar organizer — replaces Bartender (broken on Tahoe 26)
-cask "cleanmymac"
+# Menu bar management (Ice) removed per user request — macOS Tahoe 26 added a native
+# Menu Bar section in System Settings (System Settings > Menu Bar > Menu Bar Controls)
+# covering per-app icon show/hide, Command-drag reordering, and menu bar auto-hide modes,
+# which is sufficient for this stack's needs. See ARCHIVE.md Section 4.9.
+# (cleanmymac removed per user request)
 # cask "logi-options-plus"      # Uncomment if using Logitech peripherals
 
 # NOTE: Entire CLI removed from bootstrap-required tooling — see the note at the top of
