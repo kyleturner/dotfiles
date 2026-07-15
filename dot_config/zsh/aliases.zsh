@@ -14,10 +14,15 @@ alias find='fd'
 # --- Git shortcuts (generic, not project-specific) ---
 alias gs='git status'
 alias gp='git pull'
+alias gf='git fetch'
+alias gm='git pull origin main'
 alias gc='git commit'
 alias gco='git checkout'
 alias gd='git diff'
 alias gl='git log --oneline --graph --decorate -20'
+
+# --- General ---
+alias c='clear'
 
 # --- Navigation ---
 alias ..='cd ..'
