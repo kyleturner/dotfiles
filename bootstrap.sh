@@ -12,7 +12,7 @@
 set -euo pipefail
 
 GITHUB_USER="kyleturner"
-DOTFILES_REPO="gh:${GITHUB_USER}/dotfiles"
+DOTFILES_REPO="git@github.com:${GITHUB_USER}/dotfiles.git"
 
 echo "=================================================="
 echo " macOS Developer Workstation Bootstrap"
@@ -51,7 +51,10 @@ echo "Before continuing, confirm each of these is done:"
 echo ""
 echo "  1. Signed into the App Store (Apple ID)"
 echo "  2. 1Password installed, signed in, Touch ID unlock enabled"
-echo "  3. Terminal granted 'App Management' permission:"
+echo "  3. 1Password SSH Agent enabled:"
+echo "     1Password → Settings → Developer → \"Use the SSH Agent\" (toggle ON)"
+echo "     Your GitHub SSH key must already exist in 1Password's vault for this to work."
+echo "  4. Terminal granted 'App Management' permission:"
 echo "     System Settings → Privacy & Security → App Management"
 echo ""
 echo "  (Xcode is intentionally NOT gated here — it's a separate manual step."
@@ -59,7 +62,23 @@ echo "   See RUNBOOK.md Section 3. mas is unreliable for Xcode specifically —"
 echo "   see ARCHIVE.md Section 4.12. Start the Xcode download now, in parallel,"
 echo "   from https://developer.apple.com/download/applications)"
 echo ""
-read -p "Press Enter once all three are done, or Ctrl-C to stop and do them now... "
+read -p "Press Enter once all four are done, or Ctrl-C to stop and do them now... "
+
+# ------------------------------------------------------------
+# Pre-seed ~/.ssh/config so `chezmoi init` can clone over SSH via the 1Password agent.
+# chezmoi's own dot_config/ssh (or equivalent) will confirm/overwrite this identically
+# once applied — this is only needed to break the chicken-and-egg: chezmoi needs SSH
+# working to clone the repo that would otherwise configure SSH.
+# ------------------------------------------------------------
+mkdir -p ~/.ssh
+if ! grep -q "1password" ~/.ssh/config 2>/dev/null; then
+  echo "→ Pre-seeding ~/.ssh/config for the 1Password SSH agent..."
+  cat >> ~/.ssh/config << 'EOF'
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+EOF
+  chmod 600 ~/.ssh/config
+fi
 
 # ------------------------------------------------------------
 # sudo keepalive — prevents timeout mid-run (needed for mas, defaults, etc.)

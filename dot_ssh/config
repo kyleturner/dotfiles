@@ -1,0 +1,15 @@
+# ~/.ssh/config
+# See macos-dev-workstation-ARCHIVE.md Section 4.11.
+#
+# Routes all SSH operations through 1Password's SSH agent rather than the default
+# ssh-agent or on-disk private keys. Requires: 1Password Settings -> Developer ->
+# "Use the SSH Agent" enabled, and the relevant key present in 1Password's vault.
+#
+# NOTE: bootstrap.sh pre-seeds an identical copy of this file BEFORE chezmoi runs,
+# since chezmoi itself needs working SSH to clone this repo in the first place. Once
+# chezmoi applies, this file becomes the source of truth going forward -- the two
+# should never drift, since bootstrap.sh's pre-seed step is deliberately kept in sync
+# with this file's content.
+
+Host *
+  IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
