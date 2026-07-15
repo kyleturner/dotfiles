@@ -14,7 +14,12 @@
     profile      = {{ $profile | quote }}
     projectsDir  = "{{ .chezmoi.homeDir }}/Projects"
     githubUser   = "kyleturner"
-    vault        = "Developer"
+    opVault      = "Developer"
+    # NOTE: named opVault, not vault -- "vault" collides with chezmoi's own reserved
+    # top-level config key (used for HashiCorp Vault integration, vault.command), which
+    # caused a real "decoding failed... 'vault' expected a map or struct" error on first
+    # real-world run. This field isn't currently consumed by any template (the vault name
+    # is hardcoded directly in op:// references elsewhere) -- it exists for future use.
 
 [git]
     autoCommit = false
