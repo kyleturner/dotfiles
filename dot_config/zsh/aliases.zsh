@@ -38,3 +38,6 @@ alias brewup='brew update && brew upgrade && brew upgrade --cask && brew upgrade
 
 # --- Claude Code / sandboxing (see Section 4.18) ---
 alias claude-sandboxed='npx @anthropic-ai/sandbox-runtime claude'
+
+# --- Shell / terminal config reload ---
+alias reload='source ~/.zshrc && ghostty +reload-config'

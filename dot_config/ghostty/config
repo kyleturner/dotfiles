@@ -1,32 +1,97 @@
 # ~/.config/ghostty/config
 # See macos-dev-workstation-ARCHIVE.md Section 4.2 and Section 14.6.
 #
-# NOTE: theme/font-size/window styling below are reasonable starting defaults, not a
-# researched decision the way the rest of this stack is — adjust to taste. The two lines
-# marked REQUIRED are actual standing decisions from the archive and should not be removed.
+# NOTE: Ghostty 1.2.0 renamed its bundled themes from lowercase-hyphenated
+# (catppuccin-mocha) to title-case-spaced (Catppuccin Mocha) — a real breaking change
+# in Ghostty itself, not a typo here. Run `ghostty +list-themes` to see current valid
+# names if this breaks again in a future Ghostty release.
 
+# --- Typography ---
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+font-thicken=true
+font-thicken-strength=1
+adjust-cell-height=2
+bold-color = bright
+
+# --- Theme ---
+theme = Catppuccin Mocha
+
+# --- Window and Appearance ---
+background-opacity = 0.9
+background-blur-radius = 20
+macos-titlebar-style = transparent
+macos-icon-frame = plastic
+macos-icon-ghost-color = #00FFFF
+window-padding-x = 10
+window-padding-y = 8
+window-save-state = always
+window-subtitle = working-directory
+window-theme = auto
+
+# --- Cursor ---
+cursor-style = bar
+cursor-style-blink = true
+cursor-opacity = 0.8
+
+# --- Mouse ---
+mouse-hide-while-typing = true
+copy-on-select = clipboard
+
+# --- Quick Terminal (Quake-style dropdown) ---
+quick-terminal-position = top
+quick-terminal-screen = mouse
+quick-terminal-autohide = true
+quick-terminal-animation-duration = 0.15
+
+# --- Security ---
+clipboard-paste-protection = true
+clipboard-paste-bracketed-safe = true
+
+# --- Shell Integration ---
+shell-integration = detect
 # REQUIRED — see Section 14.3 Callout #3 / Section 14.6. Without this, `ssh` + `tmux` to a
 # remote host without Ghostty's terminfo entry breaks with "missing or unsuitable terminal:
 # xterm-ghostty". ssh-env sets TERM=xterm-256color automatically for such hosts; ssh-terminfo
 # installs Ghostty's terminfo on remote hosts when possible.
 shell-integration-features = ssh-env,ssh-terminfo
 
-# Font — Nerd Font already in the Brewfile (font-jetbrains-mono-nerd-font), needed for
-# Starship prompt icons and tmux/zsh glyphs to render correctly.
-font-family = JetBrainsMono Nerd Font
-font-size = 14
-
-# Starting defaults — adjust freely, not a researched decision.
-# NOTE: Ghostty 1.2.0 renamed its bundled themes from lowercase-hyphenated
-# (catppuccin-mocha) to title-case-spaced (Catppuccin Mocha) — a real breaking change
-# in Ghostty itself, not a typo here. Run `ghostty +list-themes` to see current valid
-# names if this breaks again in a future Ghostty release.
-theme = Catppuccin Mocha
-window-padding-x = 10
-window-padding-y = 10
-cursor-style = block
-mouse-hide-while-typing = true
+# --- Performance ---
+scrollback-limit = 25000000
 
 # NOTE: any keybind or startup command added here that would run a project-specific tool
 # command must call `mise run <task>` (or `tmuxp load <project>`), never the underlying
 # tool directly — see the standing rule in Section 4.3 / 14.6.
+
+# --- Keybindings ---
+# Tabs
+keybind = cmd+t=new_tab
+keybind = cmd+shift+left=previous_tab
+keybind = cmd+shift+right=next_tab
+keybind = cmd+w=close_surface
+
+# Splits
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+alt+left=goto_split:left
+keybind = cmd+alt+right=goto_split:right
+keybind = cmd+alt+up=goto_split:top
+keybind = cmd+alt+down=goto_split:bottom
+
+# Font size
+keybind = cmd+plus=increase_font_size:1
+keybind = cmd+minus=decrease_font_size:1
+keybind = cmd+zero=reset_font_size
+
+# Quick terminal global hotkey
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+# Splits management
+keybind = cmd+shift+e=equalize_splits
+keybind = cmd+shift+f=toggle_split_zoom
+
+# Reload config
+keybind = cmd+shift+comma=reload_config
+
+# cmd+s sends :w<enter> - so cmd-s works in vim in terminal
+keybind = super+s=text:\x1b:w\n
