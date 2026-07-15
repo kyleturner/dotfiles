@@ -103,10 +103,23 @@ echo "✓ Global UI configured"
 ###############################################
 # SAFARI (developer settings)
 ###############################################
-defaults write com.apple.Safari "IncludeDevelopMenu" -bool true
-defaults write com.apple.Safari "WebKitDeveloperExtrasEnabledPreferenceKey" -bool true
-defaults write NSGlobalDomain "WebKitDeveloperExtras" -bool true
-echo "✓ Safari developer settings configured"
+# NOTE: com.apple.Safari is a sandboxed domain (Safari 13+) — its real preferences live
+# in ~/Library/Containers/com.apple.Safari/Data/Library/Preferences/, not the normal
+# ~/Library/Preferences/ path. `defaults write` can only reach the sandboxed container if
+# the calling process (Terminal/Ghostty) has Full Disk Access; without it, macOS can hard-fail
+# the write with "Could not write domain ... exiting" rather than silently falling back.
+# This is expected, documented macOS sandboxing behavior, not a bug in this script — but a
+# hard failure here must not be allowed to kill the rest of the defaults run under set -e.
+if defaults write com.apple.Safari "IncludeDevelopMenu" -bool true 2>/dev/null \
+   && defaults write com.apple.Safari "WebKitDeveloperExtrasEnabledPreferenceKey" -bool true 2>/dev/null; then
+  defaults write NSGlobalDomain "WebKitDeveloperExtras" -bool true
+  echo "✓ Safari developer settings configured"
+else
+  echo "⚠️  Safari settings skipped — com.apple.Safari is sandboxed and needs Full Disk"
+  echo "   Access for Terminal/Ghostty to write its preferences (System Settings >"
+  echo "   Privacy & Security > Full Disk Access). Not fatal — continuing."
+  echo "   To set manually later: Safari > Settings > Advanced > Show features for web developers"
+fi
 
 ###############################################
 # XCODE / TEXTEDIT / TIME MACHINE

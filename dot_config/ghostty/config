@@ -17,7 +17,11 @@ font-family = JetBrainsMono Nerd Font
 font-size = 14
 
 # Starting defaults — adjust freely, not a researched decision.
-theme = catppuccin-mocha
+# NOTE: Ghostty 1.2.0 renamed its bundled themes from lowercase-hyphenated
+# (catppuccin-mocha) to title-case-spaced (Catppuccin Mocha) — a real breaking change
+# in Ghostty itself, not a typo here. Run `ghostty +list-themes` to see current valid
+# names if this breaks again in a future Ghostty release.
+theme = Catppuccin Mocha
 window-padding-x = 10
 window-padding-y = 10
 cursor-style = block

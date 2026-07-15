@@ -14,7 +14,7 @@ $nodejs\
 $python\
 $rust\
 $golang\
-$tmux_session\
+${custom.tmux_session}\
 $character"""
 
 [directory]
@@ -31,10 +31,19 @@ symbol = " "
 [git_status]
 format = "([$all_status$ahead_behind]($style) )"
 
-[tmux_session]
-disabled = false
-format = "[$symbol$session_name]($style) "
+# NOTE: there is no built-in [tmux_session] module in Starship — this was a real bug in
+# an earlier version of this config (confirmed against Starship's actual module list;
+# the error `Error in 'StarshipRoot' at 'tmux_session': Unknown key` on startup was
+# Starship correctly rejecting a module name that never existed). tmux session display
+# is implemented via Starship's custom-module mechanism instead, which is the documented,
+# correct pattern for this.
+[custom.tmux_session]
+command = "tmux display-message -p '#S' 2>/dev/null"
+when = "test -n \"$TMUX\""
+format = "[ $output]($style) "
 symbol = " "
+style = "bold yellow"
+shell = ["bash", "--noprofile", "--norc"]
 
 # Runtime version modules — only show when a mise-managed version file is present in the
 # directory, avoids prompt clutter outside project directories.
