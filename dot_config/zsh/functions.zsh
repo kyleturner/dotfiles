@@ -15,7 +15,7 @@ stackcheck() {
 # Quickly regenerate resolved secrets after rotating something in 1Password.
 resecrets() {
   echo "→ Resolving global secrets..."
-  op inject -i ~/.config/secrets/env.global.tpl -o ~/.config/secrets/.env.global
+  op inject -i ~/.config/secrets/.env.global.tpl -o ~/.config/secrets/.env.global
   chmod 600 ~/.config/secrets/.env.global
   echo "✓ Done."
 }
