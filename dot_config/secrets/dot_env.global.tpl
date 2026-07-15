@@ -10,6 +10,18 @@
 # file is gitignored -- see the repo's .gitignore.
 #
 # Vault: "Developer" -- see macos-dev-workstation-ARCHIVE.md Section 4.8.
+#
+# NOTE: for "API Credential" category items, 1Password's actual field name is
+# "credential", not "token" -- confirmed against 1Password's own item-category docs.
+# GITHUB_TOKEN below was originally written with /token, which does not exist as a
+# field on this item type and caused a real "could not find item" resolution failure.
+#
+# NOTE: ANTHROPIC_API_KEY (Claude API / Anthropic API Platform) is intentionally NOT
+# included here -- removed per direct user request. This machine uses Claude Code /
+# Claude Desktop / Claude in Chrome etc. (subscription-based Claude apps), not the
+# pay-per-token Anthropic API Platform, and the user does not want a Claude API
+# Platform key provisioned or referenced at this time given per-token pricing and
+# overage risk. If this changes later, add a line here following the same pattern as
+# GITHUB_TOKEN below, pointing "op" + "://" at the right vault/item/credential.
 
-GITHUB_TOKEN=op://Developer/GitHub-PAT/token
-ANTHROPIC_API_KEY=op://Developer/Claude API/credential
+GITHUB_TOKEN=op://Developer/GitHub-PAT/credential
