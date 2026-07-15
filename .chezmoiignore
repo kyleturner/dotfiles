@@ -1,0 +1,12 @@
+# .chezmoiignore
+# Repo-only files that must NOT be applied to $HOME. chezmoi's default behavior of
+# ignoring dotfiles at the source root is not something to rely on here — some source-root
+# dotfiles (.chezmoi.toml.tmpl) are meaningful exceptions, so this file makes the
+# repo-only/apply-to-home distinction explicit rather than implicit. See the dev.to
+# chezmoi writeup and yousiki/chezmoi's real-world repo, both of which use this exact
+# pattern for README.md/.gitignore.
+
+README.md
+LICENSE
+.gitignore
+bootstrap.sh

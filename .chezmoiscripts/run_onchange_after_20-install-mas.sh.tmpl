@@ -1,0 +1,16 @@
+#!/bin/bash
+# run_onchange_after_20-install-mas.sh.tmpl
+# Xcode is intentionally NOT installed here — see macos-dev-workstation-ARCHIVE.md
+# Section 4.12. `mas install` (the only mechanism available to a script) fails on fresh
+# Apple IDs with "Redownload Unavailable," and Xcode's size makes the App Store install
+# path unreliable even when it doesn't. Xcode is a manual step — see runbook Section 3:
+# download directly from https://developer.apple.com/download/applications
+set -euo pipefail
+
+echo "→ [20] mas step: no automated App Store installs configured."
+echo "   Xcode is a manual step — see runbook Section 3 (developer.apple.com direct download)."
+echo "   Add 'sudo mas install <id>' lines below only for apps this Apple ID has genuinely"
+echo "   acquired before; verify with 'mas get <id>' manually first if unsure."
+
+# Example, uncomment and adjust if/when needed:
+# sudo mas install <id>  # <AppName> — only if already associated with this Apple Account

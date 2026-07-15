@@ -1,0 +1,46 @@
+#!/bin/zsh
+# ~/.zshrc — see macos-dev-workstation-ARCHIVE.md Section 4.3.
+# Order matters: mise activation MUST come before anything that expects mise-managed
+# tools on $PATH. Starship comes after plugins so it can reflect their state.
+
+# --- mise: single source of truth for runtimes + per-directory env vars ---
+# Without this line, mise is installed but not hooked into the shell.
+eval "$(mise activate zsh)"
+
+# --- Homebrew shell plugins ---
+# zsh-autosuggestions — fish-style inline completion
+if [ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
+
+# fast-syntax-highlighting — must be sourced near the end of plugin loading
+if [ -f "$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]; then
+  source "$(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+fi
+
+# zsh-completions — extended completion definitions
+if type brew &>/dev/null; then
+  FPATH="$(brew --prefix)/share/zsh-completions:${FPATH}"
+  autoload -Uz compinit && compinit
+fi
+
+# fzf — fuzzy history/file search, key bindings + completion
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# zoxide — smart cd
+eval "$(zoxide init zsh)"
+
+# --- This project's own config ---
+source ~/.config/zsh/aliases.zsh
+source ~/.config/zsh/functions.zsh
+
+# --- Starship prompt — last, so it can reflect everything above ---
+eval "$(starship init zsh)"
+
+# --- History ---
+HISTSIZE=50000
+SAVEHIST=50000
+HISTFILE=~/.zsh_history
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE

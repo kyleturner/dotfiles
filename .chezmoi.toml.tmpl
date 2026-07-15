@@ -1,0 +1,32 @@
+# .chezmoi.toml.tmpl
+# chezmoi reads this at `chezmoi init` time to determine per-machine template data.
+# Prompts are kept to exactly three (name, email, profile) per the standing rule in
+# macos-dev-workstation-ARCHIVE.md Section 4.3 — everything else is either hardcoded
+# (this is a single-machine setup, see Section 4 Callout #1) or resolved via op inject.
+
+{{- $name := promptStringOnce . "name" "Full name" "Kyle Turner" -}}
+{{- $email := promptStringOnce . "email" "Git email" -}}
+{{- $profile := promptStringOnce . "profile" "Profile (personal/work)" "personal" -}}
+
+[data]
+    name         = {{ $name | quote }}
+    email        = {{ $email | quote }}
+    profile      = {{ $profile | quote }}
+    projectsDir  = "{{ .chezmoi.homeDir }}/Projects"
+    githubUser   = "kyleturner"
+    vault        = "Developer"
+
+[git]
+    autoCommit = false
+    autoPush   = false
+    # Deliberately manual — see runbook Section 6. Dotfile changes get reviewed and
+    # committed by hand, not auto-pushed to a public repo without a look first.
+
+[edit]
+    command = "cursor"
+    args    = ["-w"]
+
+[diff]
+    exclude = ["scripts"]
+    # chezmoi diff doesn't need to show the run_onchange_ script bodies every time —
+    # keeps `chezmoi diff` output focused on actual file changes.

@@ -1,0 +1,151 @@
+# Brewfile — kyleturner/dotfiles
+# Generated from macos-dev-workstation-ARCHIVE.md — see that doc for the "why" behind every line.
+# Run: brew bundle --file=Brewfile
+# Verify: brew bundle check --file=Brewfile
+#
+# IMPORTANT: HOMEBREW_BUNDLE_NO_LOCK=1 should be set in the environment before running
+# `brew bundle` — the --no-lock CLI flag was removed by Homebrew without deprecation and
+# broke scripts that relied on it; the env var is the stable equivalent.
+
+tap "entireio/tap"   # only non-core tap in this file — required for cask "entire" below
+
+# ============================================================
+# FORMULAE (CLI tools)
+# ============================================================
+
+# --- Bootstrap dependencies (installed before chezmoi runs) ---
+brew "git"
+brew "chezmoi"
+brew "mas"
+brew "1password-cli"           # op CLI for secrets
+
+# --- GitHub ---
+brew "gh"                      # GitHub CLI
+brew "git-lfs"
+
+# --- Shell experience ---
+brew "starship"                # Prompt
+brew "zsh-autosuggestions"
+brew "fast-syntax-highlighting"
+brew "zsh-completions"
+brew "fzf"                     # Fuzzy finder
+brew "zoxide"                  # Smart cd
+
+# --- Terminal multiplexing — session persistence + per-project layouts ---
+brew "tmux"                    # Session persistence — survives closed windows, crashes, SSH drops
+brew "tmuxp"                   # Declarative per-project layouts — `tmuxp load <project>`
+# NOTE: pitchfork is NOT here — it's mise-managed. See `mise use -g pitchfork`
+# in ~/.config/mise/config.toml. mise owns all non-package-manager dev tooling.
+
+# --- Modern CLI replacements ---
+brew "bat"                     # Better cat (syntax highlighting)
+brew "eza"                     # Better ls (exa successor, active fork)
+brew "ripgrep"                 # Better grep (rg)
+brew "fd"                      # Better find
+brew "delta"                   # Better git diff
+brew "tldr"                    # Concise man pages
+brew "jq"                      # JSON processing
+brew "yq"                      # YAML processing
+brew "tree"
+brew "htop"
+brew "wget"
+brew "curl"
+
+# --- Developer tools ---
+# mise owns ALL language runtimes: Node, Bun, Go, Rust, Python, Java, Terraform, kubectl.
+# DO NOT add brew "bun", brew "go", brew "rust", or brew "python@X.Y" — mise owns these
+# exclusively (see ~/.config/mise/config.toml). Homebrew formulae that need Python as a
+# build dependency vendor their own copy automatically; no system Python needed here.
+brew "mise"
+brew "pnpm"                    # Package manager for existing Node projects — not a runtime,
+                                # mise config does not list pnpm, Homebrew ownership is correct
+brew "gcc"
+brew "cmake"
+
+# --- Cloud / infrastructure ---
+brew "awscli"
+brew "terraform"
+brew "kubectl"
+brew "helm"
+brew "k9s"                     # Kubernetes TUI
+
+# --- Agentic / AI coding tooling ---
+brew "codebase-memory-mcp"     # Local code-intelligence MCP server for Claude Code.
+                                # Binary install is machine-level; per-project activation is
+                                # "index this project" said to Claude Code. CBM_ALLOWED_ROOT
+                                # env var (set in mise global config) restricts indexing to
+                                # ~/Projects — do not remove that guardrail.
+brew "ollama"                  # Local LLM inference. `brew services start ollama` to run as
+                                # background service; OpenAI-compatible API on :11434.
+
+# --- Utilities ---
+brew "imagemagick"
+brew "ffmpeg"
+# NOTE: dockutil intentionally excluded — unconfirmed compatibility with Tahoe's changed
+# Dock/plist architecture. Dock layout is a manual step (see runbook Section 3).
+
+# ============================================================
+# CASKS (GUI apps)
+# ============================================================
+
+# --- Terminal + editor ---
+cask "ghostty"                 # Terminal — Metal GPU, MIT, no account
+cask "cursor"                  # Code editor — VS Code fork, AI-native
+
+# --- AI coding assistant ecosystem ---
+cask "claude-code"             # Claude Code CLI — stable channel (NOT @latest). Set
+                                # CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE=1 in shell env —
+                                # Homebrew casks don't auto-update by default.
+cask "claude"                  # Claude Desktop — separate cask from claude-code
+
+# --- Containers ---
+cask "orbstack"                # Docker replacement — 200MB RAM, full Docker API + Compose
+# Apple Container (apple/container v1.0) is on the watch list — no Docker Compose
+# support yet. Revisit when that lands: https://github.com/apple/container
+
+# --- Secrets + auth ---
+cask "1password"                # Password manager — vault name: "Developer"
+
+# --- Productivity + launcher ---
+cask "raycast"                  # App launcher + window manager + clipboard history
+
+# --- Development tools ---
+cask "tableplus"                # Database GUI
+cask "proxyman"                 # HTTP proxy / API inspector — needs Full Disk Access (manual step)
+cask "github"                   # GitHub Desktop — optional, visual diffing/PR review
+
+# --- Browsers ---
+cask "arc"                      # Primary browser
+cask "google-chrome"            # Cross-browser testing
+cask "firefox"                  # Cross-browser testing
+
+# --- Communication + project management ---
+cask "linear-linear"
+cask "slack"
+cask "notion"
+
+# --- System utilities ---
+cask "ice"                      # Menu bar organizer — replaces Bartender (broken on Tahoe 26)
+cask "cleanmymac"
+# cask "logi-options-plus"      # Uncomment if using Logitech peripherals
+
+# --- Agent session persistence ---
+cask "entire"                   # Requires entireio/tap (tapped above). Installing this cask
+                                 # only puts `entire` on $PATH — activation is per-project via
+                                 # `entire enable`, prompted at project-init, default OFF.
+
+# --- Fonts (Nerd Fonts for Ghostty + Starship icons) ---
+cask "font-jetbrains-mono-nerd-font"
+cask "font-fira-code-nerd-font"
+
+# ============================================================
+# MAC APP STORE
+# ============================================================
+# Intentionally empty. Xcode is NOT installed here — `mas install` (which `brew bundle`
+# uses) fails on fresh Apple IDs with "Redownload Unavailable," and Xcode's size makes
+# the App Store install path unreliable regardless of tooling. Install Xcode manually
+# from https://developer.apple.com/download/applications — see runbook Section 3.
+#
+# Only add `mas "AppName", id: 123` entries here for apps this Apple ID has definitely
+# acquired before. Verify with `mas get <id>` manually first if unsure — `mas install`
+# will fail silently-ish (clear error, but easy to miss in a long bootstrap run) otherwise.

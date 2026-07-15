@@ -1,0 +1,15 @@
+#!/bin/bash
+# run_onchange_after_40-mise-install.sh.tmpl
+# Re-runs only when mise's global config content changes.
+# Hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
+set -euo pipefail
+
+echo "→ [40] Installing mise-managed runtimes..."
+
+mise install
+
+if mise doctor > /dev/null 2>&1; then
+  echo "✓ [40] mise doctor reports healthy."
+else
+  echo "⚠️  mise doctor reported issues. Run 'mise doctor' manually to inspect."
+fi

@@ -1,0 +1,55 @@
+# ~/.config/starship.toml
+# See macos-dev-workstation-ARCHIVE.md Section 4.3. Starship's job is to reflect state —
+# git branch, mise-managed runtime version, tmux session name — in <10ms, no plugin bloat.
+#
+# NOTE: module selection below is a functional starting point, not a specifically
+# researched decision the way the rest of this stack is. Adjust to taste via
+# `starship preset` or manual edits.
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$python\
+$rust\
+$golang\
+$tmux_session\
+$character"""
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+
+[git_branch]
+symbol = " "
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+
+[tmux_session]
+disabled = false
+format = "[$symbol$session_name]($style) "
+symbol = " "
+
+# Runtime version modules — only show when a mise-managed version file is present in the
+# directory, avoids prompt clutter outside project directories.
+[nodejs]
+format = "[$symbol($version )]($style)"
+detect_files = [".nvmrc", ".mise.toml", "package.json"]
+
+[python]
+format = "[$symbol($version )]($style)"
+detect_files = [".mise.toml", "requirements.txt", "pyproject.toml"]
+
+[rust]
+format = "[$symbol($version )]($style)"
+detect_files = [".mise.toml", "Cargo.toml"]
+
+[golang]
+format = "[$symbol($version )]($style)"
+detect_files = [".mise.toml", "go.mod"]

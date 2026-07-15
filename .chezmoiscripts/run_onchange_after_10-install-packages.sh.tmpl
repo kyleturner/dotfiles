@@ -1,0 +1,25 @@
+#!/bin/bash
+# run_onchange_after_10-install-packages.sh.tmpl
+# Re-runs only when Brewfile content changes (chezmoi hashes it below).
+# Hash: {{ include "dot_config/homebrew/Brewfile" | sha256sum }}
+set -euo pipefail
+
+echo "→ [10] Installing Homebrew packages..."
+
+# --no-lock CLI flag was removed by Homebrew without deprecation and broke scripts that
+# relied on it — the env var is the stable equivalent.
+export HOMEBREW_BUNDLE_NO_LOCK=1
+
+brew bundle --file="{{ .chezmoi.homeDir }}/.config/homebrew/Brewfile"
+
+# OrbStack self-updates; Homebrew tracks a stale version afterward and plain `brew upgrade`
+# would attempt a downgrade. --greedy forces a check against the real latest version.
+brew upgrade --greedy orbstack || true
+
+if ! brew bundle check --file="{{ .chezmoi.homeDir }}/.config/homebrew/Brewfile" > /dev/null 2>&1; then
+  echo "⚠️  brew bundle check reports missing packages after install. Run:"
+  echo "    brew bundle check --file=\"{{ .chezmoi.homeDir }}/.config/homebrew/Brewfile\" --verbose"
+  echo "    to see what's missing, then re-run this bootstrap."
+else
+  echo "✓ [10] All Homebrew packages confirmed installed."
+fi

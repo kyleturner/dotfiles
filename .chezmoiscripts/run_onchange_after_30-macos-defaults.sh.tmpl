@@ -1,0 +1,146 @@
+#!/bin/bash
+# run_onchange_after_30-macos-defaults.sh.tmpl
+# macOS defaults — verified against macOS Tahoe 26. Every command here is documented in
+# macos-dev-workstation-ARCHIVE.md Section 6.2 with sourcing. Commands NOT here were
+# explicitly excluded — see Section 6.3 — because they're broken, removed, or unverified
+# on Tahoe (Launchpad keys, Control Center domain, NSWindowResizeTime, etc.). Do not add
+# defaults commands here without checking Section 6.3 first.
+set -euo pipefail
+
+OS_VERSION=$(sw_vers -productVersion | cut -d. -f1)
+if [[ "$OS_VERSION" -lt 26 ]]; then
+  echo "⚠️  This script is verified for macOS 26 (Tahoe) or later. Current: $(sw_vers -productVersion)"
+  echo "   Some defaults keys may not work correctly on older versions."
+  read -p "Continue anyway? [y/N] " -n 1 -r
+  echo
+  [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
+fi
+
+echo "→ [30] Configuring macOS defaults for Tahoe 26+..."
+
+###############################################
+# DOCK
+###############################################
+defaults write com.apple.dock "tilesize" -int 48
+defaults write com.apple.dock "autohide" -bool true
+defaults write com.apple.dock "autohide-delay" -float 0
+defaults write com.apple.dock "autohide-time-modifier" -float 0.3
+defaults write com.apple.dock "show-recents" -bool false
+defaults write com.apple.dock "launchanim" -bool false
+defaults write com.apple.dock "mineffect" -string "scale"
+defaults write com.apple.dock "minimize-to-application" -bool true
+defaults write com.apple.dock "show-process-indicators" -bool true
+defaults write com.apple.dock "magnification" -bool false
+defaults write com.apple.dock "orientation" -string "bottom"
+defaults write com.apple.dock "mru-spaces" -bool false
+killall Dock 2>/dev/null || true
+echo "✓ Dock configured"
+
+###############################################
+# FINDER
+###############################################
+defaults write com.apple.finder "AppleShowAllFiles" -bool true
+defaults write NSGlobalDomain "AppleShowAllExtensions" -bool true
+defaults write com.apple.finder "ShowPathbar" -bool true
+defaults write com.apple.finder "ShowStatusBar" -bool true
+defaults write com.apple.finder "FXPreferredViewStyle" -string "Nlsv"
+defaults write com.apple.finder "_FXSortFoldersFirst" -bool true
+defaults write com.apple.finder "FXDefaultSearchScope" -string "SCcf"
+defaults write com.apple.finder "FXEnableExtensionChangeWarning" -bool false
+defaults write com.apple.finder "NewWindowTarget" -string "PfLo"
+defaults write com.apple.finder "NewWindowTargetPath" -string "file://${HOME}/"
+defaults write com.apple.finder "_FXEnableColumnAutoSizing" -bool true
+chflags nohidden ~/Library
+sudo chflags nohidden /Volumes 2>/dev/null || true
+killall Finder 2>/dev/null || true
+echo "✓ Finder configured"
+
+###############################################
+# KEYBOARD — NOTE: KeyRepeat/InitialKeyRepeat require LOGOUT to fully apply
+###############################################
+defaults write NSGlobalDomain "KeyRepeat" -int 1
+defaults write NSGlobalDomain "InitialKeyRepeat" -int 14
+defaults write NSGlobalDomain "ApplePressAndHoldEnabled" -bool false
+defaults write NSGlobalDomain "NSAutomaticQuoteSubstitutionEnabled" -bool false
+defaults write NSGlobalDomain "NSAutomaticDashSubstitutionEnabled" -bool false
+defaults write NSGlobalDomain "NSAutomaticSpellingCorrectionEnabled" -bool false
+defaults write NSGlobalDomain "NSAutomaticCapitalizationEnabled" -bool false
+defaults write NSGlobalDomain "NSAutomaticPeriodSubstitutionEnabled" -bool false
+echo "✓ Keyboard configured (logout required for repeat-rate settings)"
+
+###############################################
+# TRACKPAD — NOTE: Three-finger drag requires LOGOUT to fully apply
+###############################################
+defaults write com.apple.AppleMultitouchTrackpad "Clicking" -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad "Clicking" -bool true
+defaults -currentHost write NSGlobalDomain "com.apple.mouse.tapBehavior" -int 1
+defaults write NSGlobalDomain "com.apple.mouse.tapBehavior" -int 1
+defaults write NSGlobalDomain "com.apple.trackpad.scaling" -float 2.5
+defaults write com.apple.AppleMultitouchTrackpad "TrackpadThreeFingerDrag" -bool true
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad "TrackpadThreeFingerDrag" -bool true
+echo "✓ Trackpad configured (logout required for three-finger drag)"
+
+###############################################
+# SCREENSHOTS — Desktop, confirmed decision (not Downloads)
+###############################################
+defaults write com.apple.screencapture "type" -string "jpg"
+defaults write com.apple.screencapture "location" -string "${HOME}/Desktop"
+defaults write com.apple.screencapture "show-thumbnail" -bool false
+defaults write com.apple.screencapture "disable-shadow" -bool true
+echo "✓ Screenshots configured (saving to Desktop)"
+
+###############################################
+# GLOBAL UI / DIALOGS
+###############################################
+defaults write NSGlobalDomain "NSNavPanelExpandedStateForSaveMode" -bool true
+defaults write NSGlobalDomain "NSNavPanelExpandedStateForSaveMode2" -bool true
+defaults write NSGlobalDomain "PMPrintingExpandedStateForPrint" -bool true
+defaults write NSGlobalDomain "PMPrintingExpandedStateForPrint2" -bool true
+defaults write com.apple.LaunchServices "LSQuarantine" -bool false
+defaults write NSGlobalDomain "AppleShowScrollBars" -string "Always"
+echo "✓ Global UI configured"
+
+###############################################
+# SAFARI (developer settings)
+###############################################
+defaults write com.apple.Safari "IncludeDevelopMenu" -bool true
+defaults write com.apple.Safari "WebKitDeveloperExtrasEnabledPreferenceKey" -bool true
+defaults write NSGlobalDomain "WebKitDeveloperExtras" -bool true
+echo "✓ Safari developer settings configured"
+
+###############################################
+# XCODE / TEXTEDIT / TIME MACHINE
+###############################################
+defaults write com.apple.dt.Xcode "ShowBuildOperationDuration" -bool true
+defaults write com.apple.TextEdit "RichText" -int 0
+defaults write com.apple.TextEdit "SmartQuotes" -bool false
+defaults write com.apple.TimeMachine "DoNotOfferNewDisksForBackup" -bool true
+echo "✓ Xcode/TextEdit/Time Machine defaults configured"
+
+###############################################
+# SPOTLIGHT EXCLUSIONS — ~/Projects, not ~/Developer or ~/code
+###############################################
+mkdir -p "{{ .projectsDir }}"
+touch "{{ .projectsDir }}/.metadata_never_index"
+echo "✓ Spotlight will not index {{ .projectsDir }}"
+
+###############################################
+# GIT GLOBAL CONFIG
+###############################################
+git config --global core.excludesfile ~/.gitignore_global
+git config --global pull.rebase false
+git config --global init.defaultBranch main
+touch ~/.gitignore_global
+grep -qxF '.DS_Store' ~/.gitignore_global || echo '.DS_Store' >> ~/.gitignore_global
+grep -qxF '*.orig' ~/.gitignore_global || echo '*.orig' >> ~/.gitignore_global
+grep -qxF '.DS_Store?' ~/.gitignore_global || echo '.DS_Store?' >> ~/.gitignore_global
+echo "✓ Git global config set"
+
+echo ""
+echo "✅ [30] macOS defaults configured."
+echo ""
+echo "⚠️  REQUIRES LOGOUT to fully apply: KeyRepeat/InitialKeyRepeat, three-finger drag,"
+echo "   Mission Control spaces settings."
+echo ""
+echo "ℹ️  MANUAL SETUP STILL NEEDED (see runbook Section 3): Control Center layout,"
+echo "   battery percentage, Night Shift, display arrangement, Dock app order."
