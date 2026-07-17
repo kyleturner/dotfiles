@@ -3,6 +3,16 @@
 # Order matters: mise activation MUST come before anything that expects mise-managed
 # tools on $PATH. Starship comes after plugins so it can reflect their state.
 
+# --- tmux: auto-attach or create the persistent "main" session ---
+# Runs before plugin loading so the outer shell hands off immediately; $TMUX being
+# set inside any tmux session prevents re-entry. [ -t 0 ] guards against
+# non-interactive contexts (scripts, CI, ssh pipe-only sessions).
+# exec replaces this shell process with tmux — no orphan shell left behind when
+# the session is detached or the tab is closed.
+if [ -z "$TMUX" ] && [ -t 0 ]; then
+    exec tmux new-session -A -s main
+fi
+
 # --- mise: single source of truth for runtimes + per-directory env vars ---
 # Without this line, mise is installed but not hooked into the shell.
 eval "$(mise activate zsh)"
