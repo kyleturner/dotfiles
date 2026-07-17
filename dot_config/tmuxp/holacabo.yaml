@@ -1,0 +1,26 @@
+# ~/.config/tmuxp/holacabo.yaml
+# Hola Cabo — pnpm monorepo app at ~/Projects/turnkey/apps/holacabomx
+# Usage: tl holacabo
+# Ports: dev → 4322
+# No database or background services required.
+
+session_name: holacabo
+start_directory: ~/Projects/turnkey
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: dev
+    panes:
+      - mise run dev:holacabomx
+
+  - window_name: test
+    panes:
+      - mise run test:watch:holacabomx
+
+  - window_name: shell
+    panes:
+      - git status

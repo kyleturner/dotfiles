@@ -1,0 +1,17 @@
+# ~/.config/tmuxp/dotfiles.yaml
+# Dotfiles — chezmoi-managed macOS developer dotfiles
+# Usage: tl dotfiles
+# Workflow: edit files in ~/Projects/dotfiles, then `chezmoi apply` or `chezmoi update`.
+
+session_name: dotfiles
+start_directory: ~/Projects/dotfiles
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: shell
+    panes:
+      - chezmoi status

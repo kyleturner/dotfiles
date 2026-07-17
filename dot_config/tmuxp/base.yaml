@@ -1,0 +1,18 @@
+# ~/.config/tmuxp/base.yaml
+# Base — agentic SDLC toolkit / Claude Code bootstrapper (shell CLI)
+# Usage: tl base
+# No dev server or test runner — workflow is editing shell scripts and running
+# `./install.sh`, `base init`, `base update`, or `base generate` directly.
+
+session_name: base
+start_directory: ~/Projects/base
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: shell
+    panes:
+      - git status

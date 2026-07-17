@@ -1,0 +1,21 @@
+# ~/.config/tmuxp/career.yaml
+# Career — personal one-pager + resume (Vite + Tailwind, deployed to Netlify)
+# Usage: tl career
+# Ports: dev → Vite default (5173)
+
+session_name: career
+start_directory: ~/Projects/career
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: dev
+    panes:
+      - mise run dev
+
+  - window_name: shell
+    panes:
+      - git status

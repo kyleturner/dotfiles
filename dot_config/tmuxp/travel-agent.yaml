@@ -1,0 +1,26 @@
+# ~/.config/tmuxp/travel-agent.yaml
+# Travel Agent — static/SSG marketing site at ~/Projects/turnkey/apps/travel-agent
+# Usage: tl travel-agent
+# Ports: dev → 4323
+# No database or background services required.
+
+session_name: travel-agent
+start_directory: ~/Projects/turnkey
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: dev
+    panes:
+      - mise run dev:travel-agent
+
+  - window_name: test
+    panes:
+      - mise run test:watch:travel-agent
+
+  - window_name: shell
+    panes:
+      - git status

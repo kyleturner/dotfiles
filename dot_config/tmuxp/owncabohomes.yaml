@@ -1,0 +1,29 @@
+# ~/.config/tmuxp/owncabohomes.yaml
+# Own Cabo Homes — pnpm monorepo app at ~/Projects/turnkey/apps/owncabohomes
+# Usage: tl owncabohomes
+# Ports: dev → 3001 | Supabase Studio → 54323
+
+session_name: owncabohomes
+start_directory: ~/Projects/turnkey
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: dev
+    panes:
+      - mise run dev:owncabohomes
+
+  - window_name: supabase
+    panes:
+      - mise run supabase:start
+
+  - window_name: test
+    panes:
+      - mise run test:watch:owncabohomes
+
+  - window_name: shell
+    panes:
+      - git status

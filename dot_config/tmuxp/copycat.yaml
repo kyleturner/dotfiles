@@ -1,0 +1,27 @@
+# ~/.config/tmuxp/copycat.yaml
+# Copycat — native macOS clipboard manager (Swift/SwiftUI) + marketing website
+# Usage: tl copycat
+# Note: Xcode is the primary dev environment for the app itself.
+#       Run `xcodegen generate` then open Copycat.xcodeproj when starting fresh.
+#       Website is a standard Next.js app under website/ (mise run website:dev).
+
+session_name: copycat
+start_directory: ~/Projects/copycat
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: xcode
+    panes:
+      - xcodegen generate && open Copycat.xcodeproj
+
+  - window_name: website
+    panes:
+      - mise run website:dev
+
+  - window_name: shell
+    panes:
+      - git status

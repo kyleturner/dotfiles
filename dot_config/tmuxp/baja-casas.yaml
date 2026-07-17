@@ -1,0 +1,29 @@
+# ~/.config/tmuxp/baja-casas.yaml
+# Baja Casas — pnpm monorepo app at ~/Projects/turnkey/apps/baja-casas
+# Usage: tl baja-casas
+# Ports: dev → 4324 | Supabase Studio → 54333 (standalone stack, offset +10 from root)
+
+session_name: baja-casas
+start_directory: ~/Projects/turnkey
+
+windows:
+  - window_name: editor
+    focus: true
+    panes:
+      - cursor .
+
+  - window_name: dev
+    panes:
+      - mise run dev:baja-casas
+
+  - window_name: supabase
+    panes:
+      - mise run supabase:start:baja-casas
+
+  - window_name: test
+    panes:
+      - mise run test:watch:baja-casas
+
+  - window_name: shell
+    panes:
+      - git status
