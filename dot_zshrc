@@ -3,14 +3,24 @@
 # Order matters: mise activation MUST come before anything that expects mise-managed
 # tools on $PATH. Starship comes after plugins so it can reflect their state.
 
-# --- tmux: auto-attach or create the persistent "main" session ---
-# Runs before plugin loading so the outer shell hands off immediately; $TMUX being
-# set inside any tmux session prevents re-entry. [ -t 0 ] guards against
-# non-interactive contexts (scripts, CI, ssh pipe-only sessions).
-# exec replaces this shell process with tmux — no orphan shell left behind when
-# the session is detached or the tab is closed.
+# --- tmux: fzf session picker on every new Ghostty tab ---
+# If sessions exist, fzf lists them — pick one to attach, Esc to create a new one.
+# No sessions yet → new session immediately. Guards: $TMUX prevents re-entry inside
+# tmux; [ -t 0 ] skips non-interactive contexts (scripts, CI, ssh pipes).
 if [ -z "$TMUX" ] && [ -t 0 ]; then
-    exec tmux new-session -A -s main
+    if tmux list-sessions &>/dev/null 2>&1; then
+        session=$(tmux list-sessions -F "#{session_name}" \
+            | fzf --prompt="  session › " \
+                  --header="enter: attach  ·  esc: new session" \
+                  --exit-0)
+        if [ -n "$session" ]; then
+            exec tmux attach-session -t "$session"
+        else
+            exec tmux new-session
+        fi
+    else
+        exec tmux new-session
+    fi
 fi
 
 # --- mise: single source of truth for runtimes + per-directory env vars ---
