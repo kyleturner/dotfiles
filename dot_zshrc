@@ -23,13 +23,6 @@ if [ -z "$TMUX" ] && [ -t 0 ]; then
     fi
 fi
 
-# --- opensessions: sessionizer search path for the tmux sidebar's "new session"
-# popup (n/c inside the sidebar). Mirrors the tmux global environment set in
-# tmux.conf so the value is also available to plain interactive shells and any
-# script that shells out to sessionizer.sh directly (outside a tmux popup).
-export SESSIONIZER_DIR="$HOME/Projects"
-export SESSIONIZER_MAXDEPTH=3
-
 # --- mise: single source of truth for runtimes + per-directory env vars ---
 # Without this line, mise is installed but not hooked into the shell.
 eval "$(mise activate zsh)"
