@@ -1,0 +1,5 @@
+[
+  { "icon": "", "title": "htop", "category": "Tools", "action": { "popup": "htop" } },
+  { "icon": "󱃾", "title": "k9s", "category": "Tools", "action": { "popup": "k9s" } },
+  { "icon": "", "title": "Reload tmux config", "category": "tmux", "action": { "tmux": "source-file ~/.config/tmux/tmux.conf" } }
+]

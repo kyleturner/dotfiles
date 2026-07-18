@@ -1,0 +1,8 @@
+{
+  "maxHeight": 28,
+  "width": 90,
+  "padX": 3,
+  "mobileWidth": 80,
+  "border": "rounded",
+  "popupBorder": "rounded"
+}
