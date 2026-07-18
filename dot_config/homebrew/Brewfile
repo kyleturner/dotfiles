@@ -41,6 +41,7 @@ brew "zoxide"                  # Smart cd
 # --- Terminal multiplexing — session persistence + per-project layouts ---
 brew "tmux"                    # Session persistence — survives closed windows, crashes, SSH drops
 brew "tmuxp"                   # Declarative per-project layouts — `tmuxp load <project>`
+brew "tpack"                   # Tmux plugin manager — drop-in TPM replacement, TUI + CLI
 # NOTE: pitchfork is NOT here — it's mise-managed. See `mise use -g pitchfork`
 # in ~/.config/mise/config.toml. mise owns all non-package-manager dev tooling.
 
