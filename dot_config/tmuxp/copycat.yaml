@@ -9,7 +9,7 @@ session_name: copycat
 start_directory: ~/Projects/copycat
 
 windows:
-  - window_name: editor
+  - window_name: ai
     focus: true
     panes:
       - cursor .

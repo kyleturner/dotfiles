@@ -8,7 +8,7 @@ session_name: base
 start_directory: ~/Projects/base
 
 windows:
-  - window_name: editor
+  - window_name: ai
     focus: true
     panes:
       - cursor .

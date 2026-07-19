@@ -8,7 +8,7 @@ session_name: holacabo
 start_directory: ~/Projects/turnkey
 
 windows:
-  - window_name: editor
+  - window_name: ai
     focus: true
     panes:
       - cursor .

@@ -7,7 +7,7 @@ session_name: career
 start_directory: ~/Projects/career
 
 windows:
-  - window_name: editor
+  - window_name: ai
     focus: true
     panes:
       - cursor .

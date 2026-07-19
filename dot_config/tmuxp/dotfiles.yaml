@@ -7,7 +7,7 @@ session_name: dotfiles
 start_directory: ~/Projects/dotfiles
 
 windows:
-  - window_name: editor
+  - window_name: ai
     focus: true
     panes:
       - cursor .

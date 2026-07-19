@@ -9,7 +9,7 @@
 session_name: CHANGE_ME
 start_directory: ~/Projects/CHANGE_ME
 windows:
-  - window_name: editor
+  - window_name: ai
     panes:
       - cursor .
   - window_name: dev
