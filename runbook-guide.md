@@ -1793,6 +1793,17 @@ Two concrete, standing requirements for `~/.config/ghostty/config`, both surface
 1. **No project-specific commands.** Any keybind or startup command must be checked against the same rule as everything else in this section: if it would run a project-specific tool command, it must call `mise run <task>` (or launch `tmuxp load <project>`, which itself only calls `mise run` per Section 14.4) — never the underlying tool directly. This was flagged as a standing check so the same bypass bug caught in the original tmuxp draft doesn't reappear in a different file.
 2. **`shell-integration-features = ssh-env,ssh-terminfo` must be set.** Per Section 14.3's Callout #3, without this line, `ssh` + `tmux` to any remote host lacking Ghostty's terminfo entry breaks by default. This is not optional for a stack that includes backend/systems SSH workflows.
 
+### 14.7 Git worktrees + tmux — workmux
+
+[workmux](https://github.com/raine/workmux) (`brew install raine/workmux/workmux`) layers parallel git-worktree + AI-agent workflows on top of the tmuxp sessions from Section 14.4, without replacing them. Global config lives at `~/.config/workmux/config.yaml` (chezmoi-managed, `dot_config/workmux/config.yaml`).
+
+Two ways to use a worktree once it exists:
+
+- **`wm add <branch>`** (alias for `workmux add <branch>`) — native workmux behavior. Creates the worktree and a new `wm-<branch>` tmux window running just an AI agent (`claude`), alongside — not replacing — the project's existing `ai`/`dev`/`supabase`/`test`/`shell` windows, which stay on the main checkout. Use this to have an agent work a branch in isolation while you keep using the main checkout normally.
+- **`wma <branch>`** (`workmux-activate`, `dot_config/workmux/bin/executable_workmux-activate`) — a custom addition, not part of workmux itself. Retargets the *existing* windows of the current tmuxp session at the worktree: it reads the session's own `~/.config/tmuxp/<project>.yaml` to find each window's name and pane command, interrupts it, `cd`s into the worktree path, and re-runs that same command (`mise run dev:<project>`, `mise run supabase:start`, `cursor .`, etc.) from there. Use this when you actually want to run/test a specific worktree's code, not just have an agent working on it. `wma main` (or no argument) retargets everything back to the original checkout — this also runs automatically as workmux's `pre_remove` hook, so `wm remove`/`wm merge` never leaves a window cd'd into a deleted worktree.
+
+Because `workmux-activate` derives window names and commands from the tmuxp yaml instead of hardcoding them, no per-project `.workmux.yaml` is required — one is only needed if a project wants to override a global default (agent, merge strategy, etc.).
+
 ---
 
 ## 15. Audit Methodology & References

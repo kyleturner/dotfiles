@@ -38,6 +38,10 @@ alias tl='tmuxp load'
 alias ta='tmux attach -t'
 alias tls='tmux ls'
 
+# --- workmux (git worktrees + tmux) ---
+alias wm='workmux'
+alias wma='~/.config/workmux/bin/workmux-activate'
+
 # --- Homebrew maintenance ---
 alias brewup='brew update && brew upgrade && brew upgrade --cask && brew upgrade --greedy orbstack'
 

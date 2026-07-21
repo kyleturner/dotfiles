@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# ~/.config/workmux/bin/workmux-activate
+#
+# Retargets the current tmux session's tmuxp-provisioned windows (ai/dev/supabase/
+# test/shell) at a git worktree, restarting whatever `mise run ...` (or `cursor .`,
+# `git status`, etc.) command each window normally runs — now from the worktree's
+# directory instead of the main checkout.
+#
+# Usage: workmux-activate [<branch>|main]
+#   No arg, or "main": retarget everything back to the project's start_directory.
+#   <branch>:           retarget to that worktree, resolved via `workmux path`.
+#
+# Source of truth for window names + commands is the project's own tmuxp config
+# (~/.config/tmuxp/<session>.yaml) — never duplicated/hardcoded here.
+set -euo pipefail
+
+target="${1:-}"
+
+session="$(tmux display-message -p '#S')"
+tmuxp_file="$HOME/.config/tmuxp/${session}.yaml"
+
+if [[ ! -f "$tmuxp_file" ]]; then
+  echo "workmux-activate: no tmuxp config for session '${session}' at ${tmuxp_file}" >&2
+  exit 1
+fi
+
+project_root="$(yq -r '.start_directory' "$tmuxp_file")"
+project_root="${project_root/#\~/$HOME}"
+
+if [[ -z "$target" || "$target" == "main" ]]; then
+  worktree_path="$project_root"
+else
+  worktree_path="$(cd "$project_root" && workmux path "$target")"
+fi
+
+if [[ ! -d "$worktree_path" ]]; then
+  echo "workmux-activate: worktree path not found: ${worktree_path}" >&2
+  exit 1
+fi
+
+window_count="$(yq -r '.windows | length' "$tmuxp_file")"
+
+for ((i = 0; i < window_count; i++)); do
+  wname="$(yq -r ".windows[$i].window_name" "$tmuxp_file")"
+  cmd="$(yq -r ".windows[$i].panes[0]" "$tmuxp_file")"
+
+  if tmux list-windows -t "$session" -F '#{window_name}' | grep -qx "$wname"; then
+    tmux send-keys -t "${session}:${wname}" C-c
+    sleep 0.3
+    tmux send-keys -t "${session}:${wname}" "cd '${worktree_path}' && clear && ${cmd}" Enter
+  fi
+done
+
+tmux select-window -t "${session}:ai" 2>/dev/null || true
+
+echo "✓ ${session}: activated ${target:-main} → ${worktree_path}"

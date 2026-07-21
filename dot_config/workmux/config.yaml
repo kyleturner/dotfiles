@@ -1,0 +1,35 @@
+# ~/.config/workmux/config.yaml
+# Git worktrees + tmux, layered on top of the per-project tmuxp sessions
+# (~/.config/tmuxp/<project>.yaml). See runbook-guide.md Section 14.7.
+#
+# Two ways to use a worktree once `workmux add <branch>` creates it:
+#   - `wm-<branch>` window (created automatically below): a parallel AI agent,
+#     coexisting with this project's normal ai/dev/supabase/test/shell windows,
+#     which stay on the main checkout.
+#   - `wma <branch>` (alias in dot_config/zsh/aliases.zsh, script below): retargets
+#     those existing ai/dev/supabase/test/shell windows at the worktree, restarting
+#     whatever `mise run ...` command each one normally runs. `wma main` reverts.
+#
+# No per-project .workmux.yaml exists yet — add one in a project's repo root only
+# if that project needs to override something here (e.g. a different agent or
+# merge_strategy).
+
+agent: claude
+mode: window
+window_prefix: "wm-"
+merge_strategy: rebase
+
+panes:
+  - command: <agent>
+    focus: true
+
+files:
+  copy:
+    - .env.local
+    - .env
+
+# Snap any windows still pointed at this worktree back to the main checkout
+# before it's deleted, so dev/test/shell panes don't end up cd'd into a
+# now-nonexistent directory.
+pre_remove:
+  - ~/.config/workmux/bin/workmux-activate main

@@ -92,6 +92,10 @@ brew "k9s"                     # Kubernetes TUI
 # Section 4.17 for full usage guidance.
 brew "ollama"                  # Local LLM inference. `brew services start ollama` to run as
                                 # background service; OpenAI-compatible API on :11434.
+tap "raine/workmux", trusted: true
+brew "raine/workmux/workmux", trusted: true   # Git worktrees + tmux — parallel AI agent
+                                # workflows per branch. `wm` / `wma` aliases in
+                                # dot_config/zsh/aliases.zsh.
 
 # --- Utilities ---
 brew "imagemagick"
