@@ -23,6 +23,7 @@ alias gl='git log --oneline --graph --decorate -20'
 
 # --- General ---
 alias c='clear'
+alias history='history 1 | less'
 
 # --- Navigation ---
 alias ..='cd ..'
