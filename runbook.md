@@ -202,6 +202,10 @@ Skip this for client repos unless you've deliberately decided the session histor
 ```bash
 # say to Claude Code, inside the project:
 "Index this project"
+
+# or, from the terminal:
+mise run memory:index
+mise run memory:status   # check whether it's already indexed
 ```
 Then tell it to prefer graph queries for structural questions. First time indexing a big or freshly-refactored repo, sanity-check the result once (`get_architecture`) before trusting it blindly — see the archive doc's Section 4.17 if you hit something that looks wrong.
 

@@ -30,3 +30,24 @@ CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE = "1"
 # security guardrail given this machine's client/consulting repo access, not optional.
 # See Section 4.17.
 CBM_ALLOWED_ROOT = "~/Projects"
+
+# Manual-activation shortcuts for codebase-memory-mcp — see Section 4.17. Deliberately
+# NOT a mise `[hooks] enter` auto-trigger on cd: per-project activation stays a deliberate
+# moment (to also confirm CBM_ALLOWED_ROOT is scoped correctly), just a faster one to invoke.
+# Callable by both humans and non-interactive pipeline agents (`Bash(mise run *)` is
+# already allowlisted in every base-generated project's .claude/settings.json).
+[tasks."memory:index"]
+description = "Index the current directory into codebase-memory-mcp (manual, by design — Section 4.17)"
+run = "codebase-memory-mcp cli index_repository --repo-path \"$PWD\""
+
+[tasks."memory:status"]
+description = "Show codebase-memory-mcp index status for the current directory, if indexed"
+run = '''
+match=$(codebase-memory-mcp cli --json list_projects 2>/dev/null | jq -r --arg p "$PWD" '.structuredContent.projects[] | select(.root_path == $p) | .name' | head -1)
+if [ -z "$match" ]; then
+  echo "Not indexed: $PWD"
+  echo "Run: mise run memory:index"
+else
+  codebase-memory-mcp cli index_status --project "$match"
+fi
+'''

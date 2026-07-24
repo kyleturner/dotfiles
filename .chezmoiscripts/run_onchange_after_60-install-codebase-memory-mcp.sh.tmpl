@@ -12,13 +12,23 @@ set -euo pipefail
 echo "→ [60] Installing codebase-memory-mcp..."
 
 if command -v codebase-memory-mcp &> /dev/null; then
-  echo "✓ [60] codebase-memory-mcp already installed, skipping."
+  echo "✓ [60] codebase-memory-mcp already installed, skipping download."
 else
   curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
   echo "✓ [60] codebase-memory-mcp installed."
 fi
 
+# Always reconcile hook/MCP registration, even when the binary was already present —
+# confirmed idempotent via `codebase-memory-mcp install --dry-run` (preserves existing
+# indexes, just re-detects agents and rewrites hook/config wiring). Without this, a run
+# that skips the download branch above never repairs drifted or reset Claude Code hook
+# config (e.g. ~/.claude/settings.json getting reset by something else) — `chezmoi apply`
+# alone wouldn't fix it, since only the binary's own `install` step manages those files.
+codebase-memory-mcp install -y --force
+echo "✓ [60] codebase-memory-mcp hooks/config reconciled."
+
 echo "   Per-project activation is manual, by design — say \"index this project\" to"
-echo "   Claude Code inside a project directory when you want it. auto_index stays off"
-echo "   (see ARCHIVE.md Section 4.17) so CBM_ALLOWED_ROOT is deliberately checked per"
-echo "   project rather than triggered automatically on first connection."
+echo "   Claude Code inside a project directory when you want it, or run"
+echo "   \`mise run memory:index\` yourself. auto_index stays off (see runbook-guide.md"
+echo "   Section 4.17) so CBM_ALLOWED_ROOT is deliberately checked per project rather"
+echo "   than triggered automatically on first connection."
