@@ -849,6 +849,10 @@ This is the correct, only supported install path — not a workaround. No `brew 
 
 Per-project *activation* remains manual and per-repo, unchanged from the original design — say "index this project" inside Claude Code per-repo. Given the guidance above, **auto-index stays off** (`auto_index` defaults to off) rather than being turned on — an explicit "index this project" per repo is a natural moment to also decide whether `CBM_ALLOWED_ROOT` is set correctly for that context, which auto-indexing on session start would skip.
 
+**Faster manual activation, still no auto-trigger.** `dot_config/mise/config.toml` defines `mise run memory:index` (indexes `$PWD`) and `mise run memory:status` (reports whether `$PWD` is already indexed) as global tasks — a quicker terminal-native way to do the same deliberate, per-project gesture described above, not a replacement for it. There is still no `[hooks] enter`-style auto-trigger on `cd`; that was considered and deliberately rejected, since it would skip the CBM_ALLOWED_ROOT check-in this section argues for. Script 60 above was also hardened to always run `codebase-memory-mcp install -y --force` (not just on first install) so drifted Claude Code hook config self-heals on every `chezmoi apply`, confirmed idempotent via `--dry-run`.
+
+**A gotcha specific to `base`'s SDLC pipeline** (if you're running it in a project on this machine): the pipeline spawns agents into fresh git worktrees per task. codebase-memory-mcp resolves a project by the *exact* working-directory path, so an already-indexed repo's passive Grep/Glob augmentation won't automatically extend into one of those worktrees — a pipeline agent has to look up the canonical project explicitly (`list_projects`, match on `git.canonical_root`) to get graph-tool benefit there. See `base`'s own `rules/codebase-memory.md` for the full mechanics; nothing to change here, just don't be surprised if a worktree-scoped agent isn't getting the same passive augmentation you see interactively.
+
 ---
 
 ### 4.18 Claude Code Sandboxing → **Enable the built-in sandbox by default; devcontainer for unattended work**
