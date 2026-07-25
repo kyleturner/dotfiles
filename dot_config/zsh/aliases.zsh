@@ -46,6 +46,10 @@ alias wma='~/.config/workmux/bin/workmux-activate'
 # --- Homebrew maintenance ---
 alias brewup='brew update && brew upgrade && brew upgrade --cask && brew upgrade --greedy orbstack'
 
+# --- macOS system ---
+# Set the Mac login screen message. Usage: motivation "Your Message Here"
+alias motivation='sudo defaults write /Library/Preferences/com.apple.loginwindow LoginwindowText'
+
 # --- Claude Code / sandboxing (see Section 4.18) ---
 alias claude-sandboxed='npx @anthropic-ai/sandbox-runtime claude'
 
