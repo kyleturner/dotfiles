@@ -44,6 +44,11 @@ if type brew &>/dev/null; then
   autoload -Uz compinit && compinit
 fi
 
+# gh — GitHub CLI completions (needs compinit above for compdef)
+if type gh &>/dev/null; then
+  eval "$(gh completion -s zsh)"
+fi
+
 # fzf — fuzzy history/file search, key bindings + completion
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
