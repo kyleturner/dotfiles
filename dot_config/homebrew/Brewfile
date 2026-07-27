@@ -157,6 +157,9 @@ cask "slack"
 cask "notion"
 
 # --- System utilities ---
+cask "macshot"                  # Screenshot + screen recording — https://github.com/sw33tLie/macshot
+                                 # auto_updates: true, so Homebrew won't manage upgrades after
+                                 # install; the app updates itself.
 # Menu bar management (Ice) removed per user request — macOS Tahoe 26 added a native
 # Menu Bar section in System Settings (System Settings > Menu Bar > Menu Bar Controls)
 # covering per-app icon show/hide, Command-drag reordering, and menu bar auto-hide modes,
