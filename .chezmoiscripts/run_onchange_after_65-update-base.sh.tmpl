@@ -1,0 +1,34 @@
+#!/bin/bash
+# run_onchange_after_65-update-base.sh.tmpl
+# Keeps ~/Projects/base (kyleturner/base, the SDLC pipeline toolkit -- skills/
+# agents/rules for base init/update/generate, including /wizard) cloned and
+# current on this machine. Runs after script 60 (codebase-memory-mcp) since
+# base's own rules/codebase-memory.md references it.
+#
+# Only fast-forwards a clean working tree -- never touches uncommitted local
+# work in base. Re-run manually with `chezmoi apply` after editing this
+# script (run_onchange_ fires on this file's own content changing, not on
+# every apply) if you want to force a refresh sooner.
+set -euo pipefail
+
+BASE_DIR="$HOME/Projects/base"
+BASE_REPO="git@github.com:kyleturner/base.git"
+
+echo "→ [65] Checking ~/Projects/base..."
+
+if [ ! -d "$BASE_DIR/.git" ]; then
+  echo "  cloning $BASE_REPO..."
+  git clone "$BASE_REPO" "$BASE_DIR"
+  echo "✓ [65] base cloned."
+elif [ -n "$(git -C "$BASE_DIR" status --porcelain)" ]; then
+  echo "  ~/Projects/base has uncommitted local changes -- skipping pull, not touching it."
+  exit 0
+else
+  echo "  pulling latest..."
+  git -C "$BASE_DIR" pull --ff-only
+  echo "✓ [65] base up to date."
+fi
+
+if [ -x "$BASE_DIR/bin/base" ]; then
+  ( cd "$BASE_DIR" && ./bin/base generate --self ) || echo "  (base generate --self failed -- non-fatal, base's own .claude/ may be stale)"
+fi
