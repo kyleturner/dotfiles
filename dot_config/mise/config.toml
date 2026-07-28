@@ -29,19 +29,41 @@ CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE = "1"
 # Restricts codebase-memory-mcp's index_repository to this directory tree — a real
 # security guardrail given this machine's client/consulting repo access, not optional.
 # See Section 4.17.
-CBM_ALLOWED_ROOT = "~/Projects"
+#
+# NOTE: must use mise's `{{env.HOME}}` templating, not a literal "~". mise's [env] table
+# only expands "~" for its own special path directives (e.g. `_.file` above) — a plain
+# string value like "~/Projects" is passed through to the child process untouched, so
+# codebase-memory-mcp's literal path-prefix check against the real absolute repo_path
+# never matched and every index_repository call was silently refused. Confirmed via the
+# worker log (~/.cache/codebase-memory-mcp/logs/.worker-*.log): "repo_path is outside
+# the allowed root" — the MCP tool's own error surfaces only a generic
+# "indexing worker crashed" hint, which is what made this look like a parser crash.
+CBM_ALLOWED_ROOT = "{{env.HOME}}/Projects"
 
 # Manual-activation shortcuts for codebase-memory-mcp — see Section 4.17. Deliberately
 # NOT a mise `[hooks] enter` auto-trigger on cd: per-project activation stays a deliberate
 # moment (to also confirm CBM_ALLOWED_ROOT is scoped correctly), just a faster one to invoke.
 # Callable by both humans and non-interactive pipeline agents (`Bash(mise run *)` is
 # already allowlisted in every base-generated project's .claude/settings.json).
+#
+# NOTE: `dir = "{{env.PWD}}"` is required on both tasks below. Global-config tasks (i.e.
+# tasks defined here in ~/.config/mise/config.toml rather than a project-local mise.toml)
+# default their working directory to $HOME, not the directory `mise run` was invoked
+# from — mise exposes no equivalent of MISE_ORIGINAL_CWD to recover it after the fact.
+# Without this, `$PWD` inside the run script always resolved to $HOME, so
+# `mise run memory:index` silently indexed (or looked up) the wrong directory regardless
+# of where it was invoked — confirmed via `mise run memory:status` reporting
+# "Not indexed: /Users/kyleturner" while run from inside a real project. `{{env.PWD}}` is
+# mise template syntax evaluated against the invoking process's own env before mise
+# changes anything, so it captures the real invocation directory correctly.
 [tasks."memory:index"]
 description = "Index the current directory into codebase-memory-mcp (manual, by design — Section 4.17)"
+dir = "{{env.PWD}}"
 run = "codebase-memory-mcp cli index_repository --repo-path \"$PWD\""
 
 [tasks."memory:status"]
 description = "Show codebase-memory-mcp index status for the current directory, if indexed"
+dir = "{{env.PWD}}"
 run = '''
 match=$(codebase-memory-mcp cli --json list_projects 2>/dev/null | jq -r --arg p "$PWD" '.structuredContent.projects[] | select(.root_path == $p) | .name' | head -1)
 if [ -z "$match" ]; then
