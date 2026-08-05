@@ -65,6 +65,15 @@ shell-integration-features = ssh-env,ssh-terminfo
 # --- Links ---
 link-url = true
 link-previews = true
+# Click: cmd+click opens links directly in a plain shell prompt.
+# Inside tmux (mouse on), tmux claims the click first — use cmd+shift+click;
+# the shift key tells Ghostty to handle the click itself instead of forwarding
+# it to tmux. mouse-shift-capture defaults to false, which is what makes this
+# work, so no extra setting is needed here.
+# Ghostty's link matcher only recognizes a fixed set of schemes (http(s),
+# mailto, ftp, file, ssh, git, tel, magnet, ipfs, ipns, gemini, gopher, news) —
+# custom regexes (bare domains, file:line paths, git SHAs) aren't supported
+# yet. tmux-thumbs (dot_config/tmux/tmux.conf) covers those shapes instead.
 
 # --- Performance ---
 scrollback-limit = 25000000

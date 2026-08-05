@@ -38,6 +38,9 @@ alias mt='mise tasks ls'
 alias tl='tmuxp load'
 alias ta='tmux attach -t'
 alias tls='tmux ls'
+# Force the current window to fill the terminal (undoes shrink from a smaller attached client)
+alias resize='tmux resize-window -A'
+alias rs='tmux resize-window -A'
 
 # --- workmux (git worktrees + tmux) ---
 alias wm='workmux'
