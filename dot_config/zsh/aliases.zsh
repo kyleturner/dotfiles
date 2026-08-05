@@ -56,5 +56,11 @@ alias motivation='sudo defaults write /Library/Preferences/com.apple.loginwindow
 # --- Claude Code / sandboxing (see Section 4.18) ---
 alias claude-sandboxed='npx @anthropic-ai/sandbox-runtime claude'
 
+# --- Claude Code capability tips ---
+# Toggle the capability-tip UserPromptSubmit hook (installed by
+# .chezmoiscripts/run_onchange_after_68-install-capability-tips.sh.tmpl).
+alias tips-off="sed -i '' 's/^ENABLED=.*/ENABLED=false/' ~/.claude/capability-tips.env"
+alias tips-on="sed -i '' 's/^ENABLED=.*/ENABLED=true/' ~/.claude/capability-tips.env"
+
 # --- Shell / terminal config reload ---
 alias reload='source ~/.zshrc && pkill -USR2 -x Ghostty'
