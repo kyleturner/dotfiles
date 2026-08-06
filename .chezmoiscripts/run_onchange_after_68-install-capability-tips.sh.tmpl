@@ -1,0 +1,210 @@
+#!/bin/bash
+# run_onchange_after_68-install-capability-tips.sh.tmpl
+# Installs a UserPromptSubmit hook that occasionally surfaces a "did you know"
+# capability tip -- a skill, agent, hotkey, alias, or recent feature -- drawn
+# from ~/Projects/base and ~/Projects/dotfiles, so the growing surface of both
+# toolkits stays discoverable instead of forgotten. Runs after script 65
+# (update-base) so ~/Projects/base is guaranteed cloned/current before the
+# hook's own tip bank is ever read at runtime.
+#
+# Reconciles ~/.claude/settings.json additively only -- appends a new
+# UserPromptSubmit hook entry if not already present, never removes or
+# replaces any existing entry (workmux, codebase-memory-mcp). See
+# base/docs/plans/plan-080526_capability_tip_reminders.md for the full design
+# (Workstreams A/C/D) and rationale.
+set -euo pipefail
+
+echo "→ [68] Installing capability-tip hook..."
+
+HOOK_PATH="$HOME/.claude/hooks/capability-tip"
+CONFIG_PATH="$HOME/.claude/capability-tips.env"
+SETTINGS_PATH="$HOME/.claude/settings.json"
+
+mkdir -p "$HOME/.claude/hooks"
+
+cat > "$HOOK_PATH" <<'HOOK_EOF'
+#!/usr/bin/env bash
+# ~/.claude/hooks/capability-tip
+# UserPromptSubmit hook: occasionally surfaces a "did you know" capability tip
+# drawn from ~/Projects/base and ~/Projects/dotfiles, so the growing skill/
+# hotkey/alias surface of both toolkits stays discoverable instead of
+# forgotten. Installed by dotfiles' run_onchange_after_68-install-capability-
+# tips.sh.tmpl. See base's docs/plans/plan-080526_capability_tip_reminders.md
+# for the full design.
+#
+# Fail-safe by design: any missing tool, missing file, or unexpected error
+# below falls through to "no output, exit 0" -- never a noisy or blocking
+# failure on the user's prompt submission.
+set -uo pipefail
+
+CONFIG="${CAPABILITY_TIP_CONFIG:-$HOME/.claude/capability-tips.env}"
+STATE_DIR="${CAPABILITY_TIP_STATE_DIR:-$HOME/.claude/hooks-state}"
+BASE_REPO="${CAPABILITY_TIP_BASE_REPO:-$HOME/Projects/base}"
+DOTFILES_REPO="${CAPABILITY_TIP_DOTFILES_REPO:-$HOME/Projects/dotfiles}"
+
+LAST_FIRE_FILE="$STATE_DIR/capability-tip-last"
+LAST_ID_FILE="$STATE_DIR/capability-tip-lastid"
+BASE_BANK="$BASE_REPO/docs/capability-tips.json"
+DOTFILES_BANK="$DOTFILES_REPO/capability-tips.json"
+
+ENABLED="true"
+PROBABILITY_PCT="12"
+MIN_INTERVAL_MINUTES="20"
+# shellcheck disable=SC1090
+[ -f "$CONFIG" ] && . "$CONFIG" 2>/dev/null
+
+main() {
+  [ "$ENABLED" = "true" ] || return 0
+  command -v jq >/dev/null 2>&1 || return 0
+
+  if [ "${CAPABILITY_TIP_FORCE:-0}" != "1" ]; then
+    local roll=$(( RANDOM % 100 ))
+    [ "$roll" -lt "$PROBABILITY_PCT" ] || return 0
+
+    local now last elapsed_min
+    now=$(date +%s)
+    last=0
+    [ -f "$LAST_FIRE_FILE" ] && last=$(cat "$LAST_FIRE_FILE" 2>/dev/null)
+    [[ "$last" =~ ^[0-9]+$ ]] || last=0
+    elapsed_min=$(( (now - last) / 60 ))
+    [ "$elapsed_min" -ge "$MIN_INTERVAL_MINUTES" ] || return 0
+  fi
+
+  local last_id=""
+  [ -f "$LAST_ID_FILE" ] && last_id=$(cat "$LAST_ID_FILE" 2>/dev/null)
+
+  local base_pool dotfiles_pool base_n dot_n
+  base_pool=$(repo_pool "base" "$BASE_REPO" "$BASE_BANK")
+  dotfiles_pool=$(repo_pool "dotfiles" "$DOTFILES_REPO" "$DOTFILES_BANK")
+  base_n=$(jq 'length' <<<"$base_pool" 2>/dev/null || echo 0)
+  dot_n=$(jq 'length' <<<"$dotfiles_pool" 2>/dev/null || echo 0)
+  [ "$base_n" -gt 0 ] || [ "$dot_n" -gt 0 ] || return 0
+
+  # Repo-fair pick: 50/50 between repos, 100% to whichever is non-empty if the other is empty.
+  local chosen_pool other_pool
+  if [ "$base_n" -gt 0 ] && [ "$dot_n" -gt 0 ]; then
+    if [ $(( RANDOM % 2 )) -eq 0 ]; then chosen_pool="$base_pool"; other_pool="$dotfiles_pool"
+    else chosen_pool="$dotfiles_pool"; other_pool="$base_pool"; fi
+  elif [ "$base_n" -gt 0 ]; then
+    chosen_pool="$base_pool"; other_pool="[]"
+  else
+    chosen_pool="$dotfiles_pool"; other_pool="[]"
+  fi
+
+  # Exclude the last-shown id (AC-9). If that empties the chosen repo's pool (e.g. it only
+  # has one tip right now), try the other repo next -- breaking strict 50/50 fairness only
+  # in this rare degraded case -- before finally allowing a repeat as the last resort.
+  local filtered_pool fn
+  filtered_pool=$(jq -c --arg last "$last_id" '[.[] | select(.id != $last)]' <<<"$chosen_pool" 2>/dev/null)
+  fn=$(jq 'length' <<<"$filtered_pool" 2>/dev/null || echo 0)
+  if [ "$fn" -eq 0 ]; then
+    filtered_pool=$(jq -c --arg last "$last_id" '[.[] | select(.id != $last)]' <<<"$other_pool" 2>/dev/null)
+    fn=$(jq 'length' <<<"$filtered_pool" 2>/dev/null || echo 0)
+  fi
+  if [ "$fn" -eq 0 ]; then
+    filtered_pool="$chosen_pool"
+    fn=$(jq 'length' <<<"$chosen_pool" 2>/dev/null || echo 0)
+  fi
+  [ "$fn" -gt 0 ] || return 0
+
+  local idx tip_id tip_text
+  idx=$(( RANDOM % fn ))
+  tip_id=$(jq -r ".[$idx].id" <<<"$filtered_pool" 2>/dev/null)
+  tip_text=$(jq -r ".[$idx].text" <<<"$filtered_pool" 2>/dev/null)
+  [ -n "$tip_id" ] && [ "$tip_id" != "null" ] || return 0
+  [ -n "$tip_text" ] && [ "$tip_text" != "null" ] || return 0
+
+  mkdir -p "$STATE_DIR" 2>/dev/null || return 0
+  local tmp_fire="$STATE_DIR/.capability-tip-last.$$"
+  date +%s > "$tmp_fire" 2>/dev/null && mv -f "$tmp_fire" "$LAST_FIRE_FILE" 2>/dev/null
+  local tmp_id="$STATE_DIR/.capability-tip-lastid.$$"
+  printf '%s' "$tip_id" > "$tmp_id" 2>/dev/null && mv -f "$tmp_id" "$LAST_ID_FILE" 2>/dev/null
+
+  cat <<TIP
+SYSTEM NOTE (do not skip): before or after your normal reply, include this exact line verbatim on its own: '💡 Tip: $tip_text'. This is a one-time reminder unrelated to the user's request — do not ask about it, just include the line naturally.
+TIP
+}
+
+# repo_pool <label> <repo_path> <bank_path>
+# Builds this repo's tip pool: its static bank (if present) plus up to one
+# dynamic entry summarizing its most recent feat() commit (if the repo is
+# present and is a git repo). Never a separate merged pool across repos --
+# see Grill log Q4 in the plan for why this stays per-repo.
+repo_pool() {
+  local label="$1" repo_path="$2" bank="$3"
+  local pool="[]"
+  if [ -f "$bank" ]; then
+    pool=$(jq -c '[.[] | {id, category, text}]' "$bank" 2>/dev/null) || pool="[]"
+  fi
+  if [ -d "$repo_path/.git" ]; then
+    local subject
+    subject=$(git -C "$repo_path" log --oneline -15 2>/dev/null | grep -m1 -E '^[a-f0-9]+ feat' | sed -E 's/^[a-f0-9]+ //')
+    if [ -n "$subject" ]; then
+      pool=$(jq -c --arg id "${label}:recent-commit" --arg text "New in $label: $subject" \
+        '. + [{id: $id, category: "recent", text: $text}]' <<<"$pool" 2>/dev/null) || true
+    fi
+  fi
+  echo "$pool"
+}
+
+main 2>/dev/null
+exit 0
+HOOK_EOF
+chmod +x "$HOOK_PATH"
+echo "  hook script written to $HOOK_PATH"
+
+if [ ! -f "$CONFIG_PATH" ]; then
+  cat > "$CONFIG_PATH" <<'ENV_EOF'
+# ~/.claude/capability-tips.env
+# Tunable config for the capability-tip UserPromptSubmit hook. Written once by
+# dotfiles' run_onchange_after_68-install-capability-tips.sh.tmpl and never
+# overwritten again -- edit freely, or use the tips-on/tips-off aliases.
+ENABLED=true
+PROBABILITY_PCT=12
+MIN_INTERVAL_MINUTES=20
+ENV_EOF
+  echo "  config written to $CONFIG_PATH (defaults: 12% chance per prompt, 20min throttle)"
+else
+  echo "  config already exists at $CONFIG_PATH -- leaving untouched"
+fi
+
+# Reconcile ~/.claude/settings.json: append a UserPromptSubmit hook entry for
+# capability-tip if one isn't already present. Additive only -- every other
+# hook entry (workmux, codebase-memory-mcp) is left exactly as-is. Matches the
+# merge style base/bin/base already uses for its own settings.json sync
+# (load JSON, extend a list, write back), adapted for hooks' nested-object
+# array shape -- dedup compares the `command` string only (Grill log Q2), not
+# the full entry, so an unrelated field changing between versions never
+# creates a duplicate.
+python3 - "$SETTINGS_PATH" "$HOOK_PATH" <<'PYEOF'
+import json, os, sys
+
+settings_path, hook_path = sys.argv[1], sys.argv[2]
+command = "~/.claude/hooks/" + os.path.basename(hook_path)
+
+if os.path.exists(settings_path):
+    with open(settings_path) as fh:
+        settings = json.load(fh)
+else:
+    settings = {}
+
+hooks = settings.setdefault("hooks", {})
+ups = hooks.setdefault("UserPromptSubmit", [])
+
+already_present = any(
+    isinstance(entry, dict)
+    and any(h.get("command") == command for h in entry.get("hooks", []))
+    for entry in ups
+)
+
+if not already_present:
+    ups.append({"hooks": [{"type": "command", "command": command}]})
+    with open(settings_path, "w") as fh:
+        json.dump(settings, fh, indent=2)
+        fh.write("\n")
+    print("  ~/.claude/settings.json: UserPromptSubmit hook added")
+else:
+    print("  ~/.claude/settings.json: hook already present, no change")
+PYEOF
+
+echo "✓ [68] capability-tip hook reconciled."

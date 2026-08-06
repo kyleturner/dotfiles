@@ -1,0 +1,82 @@
+[
+  {
+    "id": "dotfiles:workmux",
+    "category": "worktree",
+    "text": "workmux (alias wm) turns `workmux add <branch>` into a full parallel-agent setup — a `wm-<branch>` tmux window with a fresh Claude Code session, coexisting with your normal ai/dev/supabase/test/shell windows on the main checkout."
+  },
+  {
+    "id": "dotfiles:wma",
+    "category": "worktree",
+    "text": "`wma <branch>` retargets your project's existing ai/dev/supabase/test/shell windows at a worktree, restarting whatever `mise run ...` each one runs. `wma main` reverts them back."
+  },
+  {
+    "id": "dotfiles:resize",
+    "category": "tmux",
+    "text": "If a tmux window looks shrunk after reattaching a smaller client, `resize` (or `rs`) forces it to fill the terminal again — `tmux resize-window -A` under the hood."
+  },
+  {
+    "id": "dotfiles:tmux-reload",
+    "category": "tmux",
+    "text": "Prefix + r reloads your tmux config in place — no need to kill and restart the session to pick up a tmux.conf change."
+  },
+  {
+    "id": "dotfiles:tmux-splits",
+    "category": "tmux",
+    "text": "Option+\\ splits a tmux pane horizontally, Option+- splits it vertically — no tmux prefix needed, both open in the current pane's directory."
+  },
+  {
+    "id": "dotfiles:tmux-pane-nav",
+    "category": "tmux",
+    "text": "Option+h/j/k/l moves between tmux panes vim-style, no prefix required — Option+z zooms/unzooms the current pane to fullscreen."
+  },
+  {
+    "id": "dotfiles:tmux-window-nav",
+    "category": "tmux",
+    "text": "Option+, and Option+. jump to the previous/next tmux window — faster than reaching for the window number."
+  },
+  {
+    "id": "dotfiles:motivation",
+    "category": "macos",
+    "text": "`motivation \"Your Message Here\"` sets the text shown on your Mac's login screen — a quick way to leave yourself (or whoever's staring at a locked screen) a note."
+  },
+  {
+    "id": "dotfiles:stackcheck",
+    "category": "maintenance",
+    "text": "`stackcheck` runs brew bundle check, mise doctor, and chezmoi doctor in one shot — a fast full health check of your dev stack when something feels off."
+  },
+  {
+    "id": "dotfiles:resecrets",
+    "category": "maintenance",
+    "text": "After rotating something in 1Password, `resecrets` re-resolves ~/.config/secrets/.env.global from your templates so every project picks up the new value."
+  },
+  {
+    "id": "dotfiles:newproject",
+    "category": "scaffolding",
+    "text": "`newproject <name>` scaffolds a new ~/Projects/<name> directory with a starting .mise.toml (Node, Bun, dev/test task stubs) and git-inits it."
+  },
+  {
+    "id": "dotfiles:reload",
+    "category": "shell",
+    "text": "`reload` re-sources ~/.zshrc and signals Ghostty to reload its own config — one alias instead of two separate steps after editing your shell setup."
+  },
+  {
+    "id": "dotfiles:eza-aliases",
+    "category": "shell",
+    "text": "`ls`/`ll`/`lt` are aliased to eza — `ll` adds git status per file, `lt` shows a 2-level tree, both with icons."
+  },
+  {
+    "id": "dotfiles:git-shortcuts",
+    "category": "git",
+    "text": "gs/gp/gf/gm/gc/gco/gd/gl cover the everyday git flow — gl in particular gives a compact `--oneline --graph --decorate -20` log."
+  },
+  {
+    "id": "dotfiles:sandboxed-claude",
+    "category": "claude-code",
+    "text": "`claude-sandboxed` runs Claude Code through @anthropic-ai/sandbox-runtime — useful when you want to try a command without giving it full host access."
+  },
+  {
+    "id": "dotfiles:proj-alias",
+    "category": "shell",
+    "text": "`proj` is a one-word `cd ~/Projects` — small, but it's the single most common `cd` on this machine."
+  }
+]
